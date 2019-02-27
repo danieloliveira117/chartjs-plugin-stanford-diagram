@@ -1,0 +1,16 @@
+{
+  "name": "stanford-chartjs",
+  "version": "1.0.0",
+  "description": "Stanford Diagram on charjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Daniel Olivera <daniel-oliveira@present-technologies.com>",
+  "license": "MIT",
+  "dependencies": {
+    "chartjs": "^0.3.24",
+    "chartjs-plugin-annotation": "^0.5.7",
+    "d3": "^5.9.1"
+  }
+}
