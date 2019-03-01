@@ -1,5 +1,5 @@
 import horizontalData from '../dataset/horizontalData.js';
-import createColorScale from './testeCanvas.js';
+import createColorScale from './stanford-diagram-canvas.js';
 
 function compareSamples(a, b) {
     if (a.samples < b.samples)
@@ -10,57 +10,78 @@ function compareSamples(a, b) {
     return 0;
 }
 
-function getColorScale(scale, maxSamples, invertColor) {
-    const legendFullHeight = 420;
-
-    const legendMargin = { top: 10, bottom: 10, left: 50, right: 0 };
-
-    const legendHeight = legendFullHeight - legendMargin.top - legendMargin.bottom;
-
-    const startData = 1;
-    const endData = maxSamples + 1;
-
-    const colorScale = d3.scaleSequentialPow(scale)
-        .domain(invertColor ? [1, legendHeight] : [1, legendHeight]);
-
-    // Scale Legend Axis
-    const logScale = d3.scaleLog()
-        .domain([startData, endData])
-        .range([legendHeight, 1]);
-
-    return [colorScale, logScale];
-}
-
 window.onload = () => {
-    let originalData = horizontalData.filter((value) => { return value.samples >= 0 });
+    let originalData = horizontalData.filter((value) => {
+        return value.samples >= 0
+    });
 
     originalData.sort(compareSamples); // draw bigger samples later
 
-    const maxSamples = d3.max(originalData, (data) => { return data.samples });
-    const maxXPE = d3.max(originalData, (data) => { return data.HPE });
-    const maxYPL = d3.max(originalData, (data) => { return data.HPL });
-    const totalSamples = originalData.reduce((a, b) => { return a + b.samples }, 0);
+    const maxSamples = d3.max(originalData, (data) => {
+        return data.samples
+    });
+    const maxXPE = d3.max(originalData, (data) => {
+        return data.HPE
+    });
+    const maxYPL = d3.max(originalData, (data) => {
+        return data.HPL
+    });
+    const totalSamples = originalData.reduce((a, b) => {
+        return a + b.samples
+    }, 0);
 
     console.log(`generating graph with ${originalData.length} points`);
     console.log(`totalSamples: ${totalSamples}, maxSamples: ${maxSamples}, maxHPE: ${maxXPE}, maxHPL: ${maxYPL}`);
 
-    const [colorScale, logScale] = getColorScale(d3.interpolateInferno, maxSamples, true);
-
-    let pointColor = [];
-
-    const chartData = originalData.map(function(e) {
-        pointColor.push(colorScale(logScale(e.samples)));
-
-        return {x: e.HPE, y: e.HPL };
+    const chartData = originalData.map(function (e) {
+        return {x: e.HPE, y: e.HPL, samples: e.samples};
     });
 
     const ctx = document.getElementById("myChart").getContext('2d');
 
-    Chart.pluginService.register({
-        beforeDraw: function (chartInstance) {
-            createColorScale(chartInstance, maxSamples);
+    let plugin = {
+        beforeInit: function (chartInstance) {
+
+            chartInstance.colorScale = undefined;
+
+        },
+        beforeDatasetsUpdate: function (chartInstance) {
+
+            if (chartInstance.colorScale) {
+                chartInstance.data.datasets[0].pointBackgroundColor = [];
+                // chartInstance.data.datasets[0].pointBorderColor = [];
+
+                for (let i = 0; i < chartInstance.data.datasets[0].data.length; i++) {
+                    chartInstance.data.datasets[0].pointBackgroundColor[i] = chartInstance.colorScale(chartInstance.data.datasets[0].data[i].samples);
+                    // chartInstance.data.datasets[0].pointBorderColor[i] = chartInstance.colorScale(chartInstance.data.datasets[0].data[i].samples);
+                }
+            }
+        },
+        afterDatasetDraw: function (chartInstance) {
+
+            // Avoid infinite cycle
+            if (!chartInstance.colorScale) {
+                chartInstance.colorScale = createColorScale(chartInstance, maxSamples, false);
+
+                chartInstance.update();
+            } else {
+                chartInstance.colorScale = createColorScale(chartInstance, maxSamples, true);
+            }
+
         }
-    });
+    };
+
+    Chart.pluginService.register(plugin);
+
+    // const testFunction = d3.scaleSequential([50, 1], d3.interpolateCool);
+    //
+    // let colorArray = [];
+    //
+    // chartData.forEach((data) => {
+    //     colorArray.push(testFunction(data.samples));
+    // });
+    //
+    // console.log(colorArray);
 
     const myChart = new Chart(ctx, {
         type: 'scatter',
@@ -69,8 +90,8 @@ window.onload = () => {
             datasets: [
                 {
                     data: chartData,
-                    pointBackgroundColor: pointColor,
-                    pointBorderColor: pointColor,
+                    // pointBackgroundColor: colorArray,
+                    // pointBorderColor: colorArray,
                     radius: 1,
                 },
             ]
