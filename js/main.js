@@ -1,5 +1,5 @@
 import horizontalData from '../dataset/horizontalData.js';
-import createColorScale from './stanford-diagram-canvas.js';
+import stanfordDiagramPlugin from './stanford-diagram-plugin.js';
 
 function compareSamples(a, b) {
     if (a.samples < b.samples)
@@ -37,61 +37,16 @@ window.onload = () => {
         return {x: e.HPE, y: e.HPL, samples: e.samples};
     });
 
-    const ctx = document.getElementById("myChart").getContext('2d');
+    const ctx = document.getElementById("myChart")
+                        .getContext('2d');
 
-    let plugin = {
-        beforeInit: function (chartInstance) {
-
-            chartInstance.colorScale = undefined;
-
-        },
-        beforeDatasetsUpdate: function (chartInstance) {
-
-            if (chartInstance.colorScale) {
-                chartInstance.data.datasets[0].pointBackgroundColor = [];
-                // chartInstance.data.datasets[0].pointBorderColor = [];
-
-                for (let i = 0; i < chartInstance.data.datasets[0].data.length; i++) {
-                    chartInstance.data.datasets[0].pointBackgroundColor[i] = chartInstance.colorScale(chartInstance.data.datasets[0].data[i].samples);
-                    // chartInstance.data.datasets[0].pointBorderColor[i] = chartInstance.colorScale(chartInstance.data.datasets[0].data[i].samples);
-                }
-            }
-        },
-        afterDatasetDraw: function (chartInstance) {
-
-            // Avoid infinite cycle
-            if (!chartInstance.colorScale) {
-                chartInstance.colorScale = createColorScale(chartInstance, maxSamples, false);
-
-                chartInstance.update();
-            } else {
-                chartInstance.colorScale = createColorScale(chartInstance, maxSamples, true);
-            }
-
-        }
-    };
-
-    Chart.pluginService.register(plugin);
-
-    // const testFunction = d3.scaleSequential([50, 1], d3.interpolateCool);
-    //
-    // let colorArray = [];
-    //
-    // chartData.forEach((data) => {
-    //     colorArray.push(testFunction(data.samples));
-    // });
-    //
-    // console.log(colorArray);
-
-    const myChart = new Chart(ctx, {
+    new Chart(ctx, {
         type: 'scatter',
         data: {
             labels: 'Horizontal Data Set',
             datasets: [
                 {
                     data: chartData,
-                    // pointBackgroundColor: colorArray,
-                    // pointBorderColor: colorArray,
                     radius: 1,
                 },
             ]
@@ -101,7 +56,7 @@ window.onload = () => {
             layout: {
                 padding: {
                     left: 0,
-                    right: 110,
+                    right: 65,
                     top: 0,
                     bottom: 0
                 }
@@ -149,6 +104,7 @@ window.onload = () => {
                     }
                 }]
             }
-        }
+        },
+        plugins: [stanfordDiagramPlugin]
     });
 };
