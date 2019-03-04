@@ -4,6 +4,7 @@
   "description": "Stanford Diagram on charjs",
   "main": "index.js",
   "scripts": {
+    "start": "http-server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Daniel Olivera <daniel-oliveira@present-technologies.com>",
@@ -11,6 +12,7 @@
   "dependencies": {
     "chartjs": "^0.3.24",
     "chartjs-plugin-annotation": "^0.5.7",
-    "d3": "^5.9.1"
+    "d3": "^5.9.1",
+    "http-server": "^0.11.1"
   }
 }

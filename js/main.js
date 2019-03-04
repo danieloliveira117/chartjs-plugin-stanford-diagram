@@ -59,7 +59,7 @@ window.onload = () => {
                 xAxes: [{
                     scaleLabel: {
                         display: true,
-                        labelString: 'HPE'
+                        labelString: 'HPE (m)'
                     },
                     ticks: {
                         suggestedMax: 60,
@@ -69,7 +69,7 @@ window.onload = () => {
                 yAxes: [{
                     scaleLabel: {
                         display: true,
-                        labelString: 'HPL'
+                        labelString: 'HPL (m)'
                     },
                     ticks: {
                         suggestedMax: 60,

@@ -43,19 +43,15 @@ const colorScalePlugin = {
         // add space for scale
         chartInstance.options.layout.padding.right += 65;
     },
-    beforeDraw: function (chartInstance) {
+    afterRender: function (chartInstance) {
         const ns = chartInstance.stanfordDiagramPlugin;
 
         // Avoid infinite cycle
         if (!ns.colorScale) {
             ns.colorScale = createColorScale(chartInstance, false);
 
-            console.log('update');
-
             chartInstance.update();
         } else {
-
-            console.log('beforeDraw');
             ns.colorScale = createColorScale(chartInstance, true);
         }
     },
@@ -117,6 +113,9 @@ function createColorScale (chart, draw) {
         // Draw XY line
         const minMaxXY = Math.min(axisX.max, axisY.max);
 
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = "rgba(0, 0, 0, 0.2)";
+
         ctx.beginPath();
         ctx.moveTo(axisX.getPixelForValue(axisX.min), axisY.getPixelForValue(axisY.min));
         ctx.lineTo(axisX.getPixelForValue(minMaxXY), axisY.getPixelForValue(minMaxXY));
@@ -151,9 +150,7 @@ function drawLegendAxis(ctx, startPointLeft, startValue, endValue, minSamples, m
     const ratio = (maxSamples - 1) / (endValue - startValue);
     const roundedRatio = ratio.toFixed(1) * 20 || 1;
 
-    console.log(endValue);
-
-    for (let i = minSamples; i < maxSamples; i += roundedRatio) {
+    for (let i = minSamples; i <= maxSamples; i += roundedRatio) {
         ctx.beginPath();
 
         // Draw a tick mark 6px long (-3 to 3)
