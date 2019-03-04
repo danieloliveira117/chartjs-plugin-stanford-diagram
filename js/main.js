@@ -50,7 +50,8 @@ window.onload = () => {
             ]
         },
         options: {
-            maintainAspectRatio: true,
+            aspectRatio: 1.12,
+            // maintainAspectRatio: true,
             animation: false,
             legend: {
                 display: false
