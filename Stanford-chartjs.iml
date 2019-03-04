@@ -5,5 +5,6 @@
     <content url="file://$MODULE_DIR$" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Chart" level="application" />
+    <orderEntry type="library" name="@types/chartjs" level="application" />
   </component>
 </module>

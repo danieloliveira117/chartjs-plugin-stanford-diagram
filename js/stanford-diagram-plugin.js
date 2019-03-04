@@ -1,10 +1,63 @@
-// import d3-array, d3-scales, d3-scale-chromatic
+// import { range } from '../node_modules/d3-array/dist/d3-array.js';
+// import { scaleLinear, scaleSequentialLog } from '../node_modules/d3-scale/dist/d3-scale.js';
+// import { interpolatePlasma } from '../node_modules/d3-scale-chromatic/dist/d3-scale-chromatic.js';
+//
+// const d3 = {
+//     scaleLinear,
+//     scaleSequentialLog,
+//     range,
+//     interpolatePlasma
+// };
 
+/**
+ PLUGIN CORE API
+     beforeInit
+     afterInit
+     beforeUpdate (cancellable)
+     afterUpdate
+     beforeLayout (cancellable)
+     afterLayout
+     beforeDatasetsUpdate (cancellable)
+     afterDatasetsUpdate
+     beforeDatasetUpdate (cancellable)
+     afterDatasetUpdate
+     beforeRender (cancellable)
+     afterRender
+     beforeDraw (cancellable)
+     afterDraw
+     beforeDatasetsDraw (cancellable)
+     afterDatasetsDraw
+     beforeDatasetDraw (cancellable)
+     afterDatasetDraw
+     beforeEvent (cancellable)
+     afterEvent
+     resize
+     destroy
+ */
 const colorScalePlugin = {
     beforeInit: function (chartInstance) {
         const ns = chartInstance.stanfordDiagramPlugin = {};
 
         ns.colorScale = undefined;
+
+        // add space for scale
+        chartInstance.options.layout.padding.right += 65;
+    },
+    beforeDraw: function (chartInstance) {
+        const ns = chartInstance.stanfordDiagramPlugin;
+
+        // Avoid infinite cycle
+        if (!ns.colorScale) {
+            ns.colorScale = createColorScale(chartInstance, false);
+
+            console.log('update');
+
+            chartInstance.update();
+        } else {
+
+            console.log('beforeDraw');
+            ns.colorScale = createColorScale(chartInstance, true);
+        }
     },
     beforeDatasetsUpdate: function (chartInstance) {
         const ns = chartInstance.stanfordDiagramPlugin;
@@ -18,105 +71,98 @@ const colorScalePlugin = {
         }
 
     },
-    afterDatasetDraw: function (chartInstance) {
-        const ns = chartInstance.stanfordDiagramPlugin;
-
-        // Avoid infinite cycle
-        if (!ns.colorScale) {
-            ns.colorScale = createColorScale(chartInstance, false);
-
-            chartInstance.update();
-        } else {
-            ns.colorScale = createColorScale(chartInstance, true);
-        }
-
-    }
 };
 
 function createColorScale (chart, draw) {
     const ctx = chart.ctx;
 
-    const maxSamples = d3.max(chart.data.datasets[0].data, (data) => {
-        return data.samples
-    });
+    const minSamples = 1;
+    const maxSamples = Math.max(...chart.data.datasets[0].data.map(o => o.samples), 0);
 
     const barWidth = 25;
     const barHeight = 5;
 
-    const start_value = chart.chartArea.top;
-    const interval_value = barHeight;
-    const end_value = chart.chartArea.bottom;
+    const startValue = chart.chartArea.top;
+    const intervalValue = barHeight;
+    let endValue = chart.chartArea.bottom;
 
-    const startPoint = chart.chartArea.right + 10;
+    const colorScale = d3.scaleSequentialLog(d3.interpolatePlasma).domain([startValue, endValue]);
+    // const colorScale = d3.scaleSequentialPow(d3.interpolatePlasma).domain([startValue, endValue]);
+    // const colorScale = d3.scaleSequential([startValue, endValue], d3.interpolatePlasma);
 
-    console.log(chart);
-
-    const points = d3.range(start_value, end_value, interval_value);
-
-    const colorScale = d3.scaleSequentialLog(d3.interpolatePlasma).domain([start_value, end_value]);
-    // const colorScale = d3.scaleSequentialPow(d3.interpolatePlasma).domain([start_value, end_value]);
-    // const colorScale = d3.scaleSequential([start_value, end_value], d3.interpolatePlasma);
+    const valueScale = d3.scaleLinear()
+        .domain([minSamples, maxSamples])
+        .range([startValue, endValue]);
 
     if(draw) {
+        const startPoint = chart.chartArea.right + 10;
+
+        const points = d3.range(startValue, endValue, intervalValue);
+
+        const axisX = chart.scales['x-axis-1'];
+        const axisY = chart.scales['y-axis-1'];
+
         ctx.save();
 
         points.forEach(p => {
-            ctx.fillStyle = colorScale(end_value - p);
+            ctx.fillStyle = colorScale(endValue - p);
             ctx.fillRect(startPoint, p, barWidth, barHeight);
         });
 
+        // get rounded end value
+        endValue = points[points.length - 1] + intervalValue;
+
+        drawLegendAxis(ctx, startPoint + barWidth, startValue, endValue, minSamples, maxSamples, valueScale);
+
+        // Draw XY line
+        const minMaxXY = Math.min(axisX.max, axisY.max);
+
+        ctx.beginPath();
+        ctx.moveTo(axisX.getPixelForValue(axisX.min), axisY.getPixelForValue(axisY.min));
+        ctx.lineTo(axisX.getPixelForValue(minMaxXY), axisY.getPixelForValue(minMaxXY));
+        ctx.stroke();
+
         ctx.restore();
     }
-
-    const valueScale = drawLegendAxis(ctx, startPoint, barWidth, barHeight, start_value, interval_value, end_value, maxSamples, draw);
 
     return (value) => { return colorScale(valueScale(value)); };
 }
 
 // http://usefulangle.com/post/17/html5-canvas-drawing-1px-crisp-straight-lines
 // http://usefulangle.com/post/19/html5-canvas-tutorial-how-to-draw-graphical-coordinate-system-with-grids-and-axis
-function drawLegendAxis(ctx, startPoint, barWidth, barHeight, start_value, interval_value, end_value, maxSamples, draw) {
-    const ratio = (maxSamples - 1) / (end_value - start_value);
+function drawLegendAxis(ctx, startPointLeft, startValue, endValue, minSamples, maxSamples, scale) {
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = "#000000";
+    ctx.fillStyle = "#000000";
 
-    const scale = d3.scaleLinear()
-        .domain([1, maxSamples])
-        .range([start_value, end_value]);
+    // Vertical Line
+    ctx.beginPath();
+    ctx.moveTo(startPointLeft + 0.5, startValue);
+    ctx.lineTo(startPointLeft + 0.5, endValue);
+    ctx.stroke();
 
-    if(draw) {
-        ctx.save();
+    // Text value at that point
+    ctx.font = 'bold 12px Arial';
+    ctx.textAlign = 'start';
+    ctx.textBaseline = "middle";
 
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = "#000000";
-        ctx.fillStyle = "#000000";
+    // Ticks marks along the positive Y-axis
+    // Positive Y-axis of graph is negative Y-axis of the canvas
+    const ratio = (maxSamples - 1) / (endValue - startValue);
+    const roundedRatio = ratio.toFixed(1) * 20 || 1;
 
-        // Vertical Line
+    console.log(endValue);
+
+    for (let i = minSamples; i < maxSamples; i += roundedRatio) {
         ctx.beginPath();
-        ctx.moveTo(startPoint + barWidth + 0.5, start_value);
-        ctx.lineTo(startPoint + barWidth + 0.5, end_value);
+
+        // Draw a tick mark 6px long (-3 to 3)
+        ctx.moveTo(startPointLeft, endValue - scale(i) + startValue);
+        ctx.lineTo(startPointLeft + 6, endValue - scale(i) + startValue);
         ctx.stroke();
 
-        // Text value at that point
-        // ctx.font = '10px Arial';
-        // ctx.textAlign = 'start';
-        ctx.textBaseline = "middle";
-
-        // Ticks marks along the positive Y-axis
-        // Positive Y-axis of graph is negative Y-axis of the canvas
-        for (let i = 1; i < maxSamples; i += ratio.toFixed(1) * 20) {
-            ctx.beginPath();
-
-            // Draw a tick mark 6px long (-3 to 3)
-            ctx.moveTo(startPoint + barWidth, end_value - scale(i) + 0.5);
-            ctx.lineTo(startPoint + barWidth + 6, end_value - scale(i) + 0.5);
-            ctx.stroke();
-
-            ctx.fillText(`${i}`, startPoint + barWidth + 8, end_value - scale(i));
-        }
-
-        ctx.restore();
+        ctx.fillText(`${i}`, startPointLeft + 9, endValue - scale(i) + startValue);
     }
-
-    return scale;
 }
 
 export default colorScalePlugin;
