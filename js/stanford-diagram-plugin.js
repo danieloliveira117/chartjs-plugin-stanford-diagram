@@ -1,38 +1,36 @@
-// import { range } from '../node_modules/d3-array/dist/d3-array.js';
-// import { scaleLinear, scaleSequentialLog } from '../node_modules/d3-scale/dist/d3-scale.js';
-// import { interpolatePlasma } from '../node_modules/d3-scale-chromatic/dist/d3-scale-chromatic.js';
-//
-// const d3 = {
-//     scaleLinear,
-//     scaleSequentialLog,
-//     range,
-//     interpolatePlasma
-// };
+import {interpolatePlasma, scaleLinear, range, scaleSequentialLog} from './d3-extract.js';
+
+const d3 = {
+    scaleLinear,
+    scaleSequentialLog,
+    range,
+    interpolatePlasma
+};
 
 /**
  PLUGIN CORE API
-     beforeInit
-     afterInit
-     beforeUpdate (cancellable)
-     afterUpdate
-     beforeLayout (cancellable)
-     afterLayout
-     beforeDatasetsUpdate (cancellable)
-     afterDatasetsUpdate
-     beforeDatasetUpdate (cancellable)
-     afterDatasetUpdate
-     beforeRender (cancellable)
-     afterRender
-     beforeDraw (cancellable)
-     afterDraw
-     beforeDatasetsDraw (cancellable)
-     afterDatasetsDraw
-     beforeDatasetDraw (cancellable)
-     afterDatasetDraw
-     beforeEvent (cancellable)
-     afterEvent
-     resize
-     destroy
+ beforeInit
+ afterInit
+ beforeUpdate (cancellable)
+ afterUpdate
+ beforeLayout (cancellable)
+ afterLayout
+ beforeDatasetsUpdate (cancellable)
+ afterDatasetsUpdate
+ beforeDatasetUpdate (cancellable)
+ afterDatasetUpdate
+ beforeRender (cancellable)
+ afterRender
+ beforeDraw (cancellable)
+ afterDraw
+ beforeDatasetsDraw (cancellable)
+ afterDatasetsDraw
+ beforeDatasetDraw (cancellable)
+ afterDatasetDraw
+ beforeEvent (cancellable)
+ afterEvent
+ resize
+ destroy
  */
 const colorScalePlugin = {
     beforeInit: function (chartInstance) {
@@ -69,7 +67,7 @@ const colorScalePlugin = {
     },
 };
 
-function createColorScale (chart, draw) {
+function createColorScale(chart, draw) {
     const ctx = chart.ctx;
 
     const minSamples = 1;
@@ -82,15 +80,15 @@ function createColorScale (chart, draw) {
     const intervalValue = barHeight;
     let endValue = chart.chartArea.bottom;
 
-    const colorScale = d3.scaleSequentialLog(d3.interpolatePlasma).domain([startValue, endValue]);
     // const colorScale = d3.scaleSequentialPow(d3.interpolatePlasma).domain([startValue, endValue]);
+    const colorScale = d3.scaleSequentialLog(d3.interpolatePlasma).domain([startValue, endValue]);
     // const colorScale = d3.scaleSequential([startValue, endValue], d3.interpolatePlasma);
 
     const valueScale = d3.scaleLinear()
         .domain([minSamples, maxSamples])
         .range([startValue, endValue]);
 
-    if(draw) {
+    if (draw) {
         const startPoint = chart.chartArea.right + 10;
 
         const points = d3.range(startValue, endValue, intervalValue);
@@ -124,7 +122,9 @@ function createColorScale (chart, draw) {
         ctx.restore();
     }
 
-    return (value) => { return colorScale(valueScale(value)); };
+    return (value) => {
+        return colorScale(valueScale(value));
+    };
 }
 
 // http://usefulangle.com/post/17/html5-canvas-drawing-1px-crisp-straight-lines
