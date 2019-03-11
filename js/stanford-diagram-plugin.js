@@ -87,7 +87,7 @@ function createColorScale(chart, draw) {
     const intervalValue = barHeight;
     let endValue = chart.chartArea.bottom;
 
-    const colorScale = d3.scaleSequential(d3.interpolateHslLong(d3.hsl(250, 1, 0.5), d3.hsl(0, 1, 0.5)))
+    const colorScale = d3.scaleSequentialLog(d3.interpolateHslLong(d3.hsl(250, 1, 0.5), d3.hsl(0, 1, 0.5)))
         .domain([startValue, endValue]);
     // const colorScale = d3.scaleSequentialPow(d3.interpolatePlasma).domain([startValue, endValue]);
     // const colorScale = d3.scaleSequential([startValue, endValue], d3.interpolatePlasma);
@@ -99,7 +99,7 @@ function createColorScale(chart, draw) {
     if (draw) {
         const startPoint = chart.chartArea.right + 10;
 
-        const points = d3.range(startValue, endValue, intervalValue);
+        const points = d3.range(0, endValue - startValue, intervalValue);
 
         const axisX = chart.scales['x-axis-1'];
         const axisY = chart.scales['y-axis-1'];
@@ -110,9 +110,6 @@ function createColorScale(chart, draw) {
             ctx.fillStyle = colorScale(endValue - p);
             ctx.fillRect(startPoint, p, barWidth, barHeight);
         });
-
-        // get rounded end value
-        endValue = points[points.length - 1] + intervalValue;
 
         drawLegendAxis(ctx, startPoint + barWidth, startValue, endValue, minSamples, maxSamples, valueScale);
 
@@ -144,8 +141,8 @@ function drawLegendAxis(ctx, startPointLeft, startValue, endValue, minSamples, m
 
     // Vertical Line
     ctx.beginPath();
-    ctx.moveTo(startPointLeft + 0.5, startValue);
-    ctx.lineTo(startPointLeft + 0.5, endValue);
+    ctx.moveTo(startPointLeft + 0.5, 0);
+    ctx.lineTo(startPointLeft + 0.5, endValue - startValue);
     ctx.stroke();
 
     // Text value at that point
@@ -162,11 +159,11 @@ function drawLegendAxis(ctx, startPointLeft, startValue, endValue, minSamples, m
         ctx.beginPath();
 
         // Draw a tick mark 6px long (-3 to 3)
-        ctx.moveTo(startPointLeft, endValue - scale(i) + startValue);
-        ctx.lineTo(startPointLeft + 6, endValue - scale(i) + startValue);
+        ctx.moveTo(startPointLeft, endValue - scale(i));
+        ctx.lineTo(startPointLeft + 6, endValue - scale(i));
         ctx.stroke();
 
-        ctx.fillText(`${i}`, startPointLeft + 9, endValue - scale(i) + startValue);
+        ctx.fillText(`${i}`, startPointLeft + 9, endValue - scale(i));
     }
 }
 
