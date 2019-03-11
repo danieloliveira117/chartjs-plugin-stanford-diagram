@@ -1,11 +1,18 @@
-import {interpolatePlasma, scaleLinear, range, scaleSequentialLog} from './d3-extract.js';
+// import {interpolatePlasma, interpolateCustom, scaleLinear, range, scaleSequential, scaleSequentialLog, interpolateHsl, interpolateHslLong, hsl} from './d3-extract.js';
+//
+// const d3 = {
+//     scaleLinear,
+//     scaleSequential,
+//     scaleSequentialLog,
+//     range,
+//     interpolatePlasma,
+//     interpolateCustom,
+//     interpolateHsl,
+//     interpolateHslLong,
+//     hsl
+// };
 
-const d3 = {
-    scaleLinear,
-    scaleSequentialLog,
-    range,
-    interpolatePlasma
-};
+// import * as d3 from '../node_modules/d3/dist/d3.js';
 
 /**
  PLUGIN CORE API
@@ -80,8 +87,9 @@ function createColorScale(chart, draw) {
     const intervalValue = barHeight;
     let endValue = chart.chartArea.bottom;
 
+    const colorScale = d3.scaleSequential(d3.interpolateHslLong(d3.hsl(250, 1, 0.5), d3.hsl(0, 1, 0.5)))
+        .domain([startValue, endValue]);
     // const colorScale = d3.scaleSequentialPow(d3.interpolatePlasma).domain([startValue, endValue]);
-    const colorScale = d3.scaleSequentialLog(d3.interpolatePlasma).domain([startValue, endValue]);
     // const colorScale = d3.scaleSequential([startValue, endValue], d3.interpolatePlasma);
 
     const valueScale = d3.scaleLinear()
