@@ -92,7 +92,7 @@ function createColorScale(chart, draw) {
     // const colorScale = d3.scaleSequentialPow(d3.interpolatePlasma).domain([startValue, endValue]);
     // const colorScale = d3.scaleSequential([startValue, endValue], d3.interpolatePlasma);
 
-    const valueScale = d3.scaleLinear()
+    const valueScale = d3.scaleLog()
         .domain([minSamples, maxSamples])
         .range([startValue, endValue]);
 
@@ -137,7 +137,7 @@ function createColorScale(chart, draw) {
 
 // http://usefulangle.com/post/17/html5-canvas-drawing-1px-crisp-straight-lines
 // http://usefulangle.com/post/19/html5-canvas-tutorial-how-to-draw-graphical-coordinate-system-with-grids-and-axis
-function drawLegendAxis(ctx, startPointLeft, startValue, endValue, minSamples, maxSamples, scale) {
+function drawLegendAxis(ctx, startPointLeft, startValue, endValue, minSamples, maxSamples, valueScale) {
     ctx.lineWidth = 1;
     ctx.strokeStyle = "#000000";
     ctx.fillStyle = "#000000";
@@ -155,18 +155,25 @@ function drawLegendAxis(ctx, startPointLeft, startValue, endValue, minSamples, m
 
     // Ticks marks along the positive Y-axis
     // Positive Y-axis of graph is negative Y-axis of the canvas
-    const ratio = (maxSamples - 1) / (endValue - startValue);
-    const roundedRatio = ratio.toFixed(1) * 20 || 1;
+    // const ratio = (maxSamples - 1) / (endValue - startValue);
+    // const roundedRatio = ratio.toFixed(1) * 20 || 1;
 
-    for (let i = minSamples; i <= maxSamples; i += roundedRatio) {
+    // let test = valueScale.nice();
+
+    // for (let i = minSamples; i <= maxSamples; i += roundedRatio) {
+    for (let i = minSamples; i <= maxSamples; i++) {
+        console.log(i, valueScale(i));
         ctx.beginPath();
 
         // Draw a tick mark 6px long (-3 to 3)
-        ctx.moveTo(startPointLeft, endValue - scale(i) + startValue);
-        ctx.lineTo(startPointLeft + 6, endValue - scale(i) + startValue);
+        // ctx.moveTo(startPointLeft, endValue - scale(i) + startValue);
+        // ctx.lineTo(startPointLeft + 6, endValue - scale(i) + startValue);
+        ctx.moveTo(startPointLeft, endValue - valueScale(i));
+        ctx.lineTo(startPointLeft + 6, endValue - valueScale(i));
         ctx.stroke();
 
-        ctx.fillText(`${i}`, startPointLeft + 9, endValue - scale(i) + startValue);
+        // ctx.fillText(`${scaleLog(i)}`, startPointLeft + 9, endValue - scale(i) + startValue);
+        ctx.fillText(`${i}`, startPointLeft + 9, endValue - valueScale(i));
     }
 }
 
