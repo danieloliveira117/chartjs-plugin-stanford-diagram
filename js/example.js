@@ -1,4 +1,5 @@
 import horizontalData from '../dataset/horizontalData.5.js';
+import verticalData from '../dataset/verticalData.js';
 import stanfordDiagramPlugin from './stanford-diagram-plugin.js';
 
 function compareSamples(a, b) {
@@ -11,7 +12,7 @@ function compareSamples(a, b) {
 }
 
 window.onload = () => {
-    let originalData = horizontalData.filter((value) => {
+    let originalData = verticalData.filter((value) => {
         return value.samples >= 0
     });
 
@@ -27,13 +28,13 @@ window.onload = () => {
     console.log(`generating graph with ${originalData.length} points`);
     console.log(`totalSamples: ${totalSamples}, maxSamples: ${maxSamples}, maxHPE: ${maxXPE}, maxHPL: ${maxYPL}`);
 
-    const chartData = originalData.map(function (e) {
-        return {x: e.HPE, y: e.HPL, samples: e.samples};
-    });
-
     // const chartData = originalData.map(function (e) {
-    //     return {x: e.VPE, y: e.VPL, samples: e.samples};
+    //     return {x: e.HPE, y: e.HPL, samples: e.samples};
     // });
+
+    const chartData = originalData.map(function (e) {
+        return {x: e.VPE, y: e.VPL, samples: e.samples};
+    });
 
     const ctx = document.getElementById("myChart")
         .getContext('2d');
