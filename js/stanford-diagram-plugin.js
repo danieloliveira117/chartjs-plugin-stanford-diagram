@@ -64,6 +64,9 @@ function getStanfordConfig(chartOptions) {
 function drawRegions(chart, regions) {
     const ctx = chart.ctx;
 
+    if(!regions)
+        return;
+
     regions.forEach(function (element) {
         ctx.polygon(getPixelValue(chart, element.points), element.fillColor, element.strokeColor);
 
@@ -102,7 +105,7 @@ function drawRegionText(chart, text, points) {
     const content = text.format ? text.format(count, percentage) : `${count} (${percentage})`;
 
     ctx.save();
-    ctx.font = text.font ? text.font : `${Chart.defaults.global.defaultFontSize} ${Chart.defaults.global.defaultFontFamily}`;
+    ctx.font = text.font ? text.font : `11px ${Chart.defaults.global.defaultFontFamily}`;
     ctx.fillStyle = text.color ? text.color : Chart.defaults.global.defaultFontColor;
     ctx.textBaseline = "middle";
     ctx.fillText(content, axisX.getPixelForValue(text.x), axisY.getPixelForValue(text.y));
@@ -240,12 +243,11 @@ function drawLegendAxis(ctx, startPointLeft, startValue, endValue) {
 
     // Vertical Line
     ctx.beginPath();
-    ctx.moveTo(startPointLeft + 0.5, 0);
-    ctx.lineTo(startPointLeft + 0.5, endValue - startValue);
+    ctx.moveTo(startPointLeft + 0.5, startValue);
+    ctx.lineTo(startPointLeft + 0.5, endValue);
     ctx.stroke();
 
     // Text value at that point
-    // ctx.font = 'bold 12px Arial';
     ctx.textAlign = 'start';
     ctx.textBaseline = "middle";
 
