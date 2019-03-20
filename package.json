@@ -1,18 +1,16 @@
 {
   "name": "stanford-chartjs",
   "version": "1.0.0",
-  "description": "Stanford Diagram on charjs",
-  "main": "index.js",
+  "description": "Stanford Diagram on chartjs",
+  "main": "js/stanford-diagram-plugin.js",
   "scripts": {
-    "start": "http-server",
+    "start": "live-server --port=1234",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Daniel Olivera <daniel-oliveira@present-technologies.com>",
   "license": "MIT",
   "dependencies": {
-    "chartjs": "^0.3.24",
-    "chartjs-plugin-annotation": "^0.5.7",
-    "d3": "^5.9.1",
-    "http-server": "^0.11.1"
+    "chart.js": "^2.8.0",
+    "live-server": "^1.2.1"
   }
 }
