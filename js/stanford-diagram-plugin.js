@@ -1,43 +1,7 @@
-// import {interpolatePlasma, interpolateCustom, scaleLinear, range, scaleSequential, scaleSequentialLog, interpolateHsl, interpolateHslLong, hsl} from './d3-extract.js';
-//
-// const d3 = {
-//     scaleLinear,
-//     scaleSequential,
-//     scaleSequentialLog,
-//     range,
-//     interpolatePlasma,
-//     interpolateCustom,
-//     interpolateHsl,
-//     interpolateHslLong,
-//     hsl
-// };
-
-// import * as d3 from '../node_modules/d3/dist/d3.js';
+import {range, scaleSequential, scaleLog} from './d3-extract.js'
 
 /**
- PLUGIN CORE API
- beforeInit
- afterInit
- beforeUpdate (cancellable)
- afterUpdate
- beforeLayout (cancellable)
- afterLayout
- beforeDatasetsUpdate (cancellable)
- afterDatasetsUpdate
- beforeDatasetUpdate (cancellable)
- afterDatasetUpdate
- beforeRender (cancellable)
- afterRender
- beforeDraw (cancellable)
- afterDraw
- beforeDatasetsDraw (cancellable)
- afterDatasetsDraw
- beforeDatasetDraw (cancellable)
- afterDatasetDraw
- beforeEvent (cancellable)
- afterEvent
- resize
- destroy
+ * Stanford Diagram Plugin
  */
 const stanfordDiagramPlugin = {
     beforeInit: function (chartInstance) {
@@ -75,42 +39,47 @@ const stanfordDiagramPlugin = {
             }
         }
 
-    },
+    }
 };
 
-// function initConfig(chartInstance, config) {
-//     const chartHelpers = chartInstance.helpers;
-//
-//     config = chartHelpers.configMerge(Chart.Annotation.defaults, config);
-//
-//     if (chartHelpers.isArray(config.annotations)) {
-//         config.stanfordChart.forEach(function(annotation) {
-//             annotation.label = chartHelpers.configMerge(Chart.Annotation.labelDefaults, annotation.label);
-//         });
-//     }
-//
-//     return config;
-// }
-
+/**
+ * Get the stanfordPlugin options
+ *
+ * @param chartOptions
+ * @returns {*|options.stanfordChart|{regions}|{}}
+ */
 function getStanfordConfig(chartOptions) {
     const plugins = chartOptions.plugins;
-    const pluginAnnotation = plugins && plugins.stanfordChart ? plugins.stanfordChart : null;
+    const pluginStanfordChart = plugins && plugins.stanfordChart ? plugins.stanfordChart : null;
 
-    return pluginAnnotation || chartOptions.stanfordChart || {};
+    return pluginStanfordChart || chartOptions.stanfordChart || {};
 }
 
+/**
+ * Draws the region polygon
+ *
+ * @param chart
+ * @param regions
+ */
 function drawRegions(chart, regions) {
     const ctx = chart.ctx;
 
     regions.forEach(function (element) {
         ctx.polygon(getPixelValue(chart, element.points), element.fillColor, element.strokeColor);
 
-        if(element.text) {
+        if (element.text) {
             drawRegionText(chart, element.text, element.points);
         }
     });
 }
 
+/**
+ * Draws the amount of points in a region
+ *
+ * @param chart
+ * @param text
+ * @param points
+ */
 function drawRegionText(chart, text, points) {
     const ctx = chart.ctx;
     const axisX = chart.scales['x-axis-1'];
@@ -120,7 +89,7 @@ function drawRegionText(chart, text, points) {
 
     // Count how many points are in Region
     const count = chart.data.datasets[0].data.reduce((accumulator, currentValue) => {
-        if(pointInPolygon(currentValue, points)) {
+        if (pointInPolygon(currentValue, points)) {
             return accumulator + Number(currentValue.samples);
         }
 
@@ -132,15 +101,21 @@ function drawRegionText(chart, text, points) {
     // Get text
     const content = text.format ? text.format(count, percentage) : `${count} (${percentage})`;
 
-    console.log(total, count, percentage, content);
-
     ctx.save();
-    ctx.font = text.font ? text.font : "11px Arial, sans-serif";
-    ctx.fillStyle = text.color;
+    ctx.font = text.font ? text.font : `${Chart.defaults.global.defaultFontSize} ${Chart.defaults.global.defaultFontFamily}`;
+    ctx.fillStyle = text.color ? text.color : Chart.defaults.global.defaultFontColor;
+    ctx.textBaseline = "middle";
     ctx.fillText(content, axisX.getPixelForValue(text.x), axisY.getPixelForValue(text.y));
     ctx.restore();
 }
 
+/**
+ * Converts an array of points to the pixels in the browser
+ *
+ * @param chart
+ * @param points
+ * @returns arrayOfPointsWithCorrectScale
+ */
 function getPixelValue(chart, points) {
     const axisX = chart.scales['x-axis-1'];
     const axisY = chart.scales['y-axis-1'];
@@ -150,7 +125,15 @@ function getPixelValue(chart, points) {
     });
 }
 
-function pointInPolygon(point, polygon) { // thanks to: http://bl.ocks.org/bycoffe/5575904
+/**
+ * Check if point is inside polygon
+ * thanks to: http://bl.ocks.org/bycoffe/5575904
+ *
+ * @param point
+ * @param polygon
+ * @returns {boolean}
+ */
+function pointInPolygon(point, polygon) {
     // ray-casting algorithm based on
     // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
     let xi, yi, yj, xj, intersect,
@@ -176,11 +159,15 @@ function pointInPolygon(point, polygon) { // thanks to: http://bl.ocks.org/bycof
     return inside;
 }
 
+/**
+ * Create color scale, if {draw} is true, it draws the scale
+ *
+ * @param chart
+ * @param draw
+ * @returns function to get the color of a respective value
+ */
 function createColorScale(chart, draw) {
     const ctx = chart.ctx;
-
-    const minSamples = 1;
-    const maxSamples = Math.max(...chart.data.datasets[0].data.map(o => o.samples), 0);
 
     const barWidth = 25;
     const barHeight = 5;
@@ -189,19 +176,17 @@ function createColorScale(chart, draw) {
     const intervalValue = barHeight;
     let endValue = chart.chartArea.bottom - 15;
 
-    const colorScale = d3.scaleSequential(d3.interpolateHslLong(d3.hsl(250, 1, 0.5), d3.hsl(0, 1, 0.5)))
+    const colorScale = scaleSequential((value) => interpolateHSL([0.7, 1, 0.5], [0, 1, 0.5], value))
         .domain([startValue, endValue]);
-    // const colorScale = d3.scaleSequentialPow(d3.interpolatePlasma).domain([startValue, endValue]);
-    // const colorScale = d3.scaleSequential([startValue, endValue], d3.interpolatePlasma);
 
-    const valueScale = d3.scaleLog()
+    const valueScale = scaleLog()
         .domain([1, 10000])
         .range([startValue, endValue]);
 
     if (draw) {
         const startPoint = chart.chartArea.right + 10;
 
-        const points = d3.range(startValue, endValue, intervalValue);
+        const points = range(startValue, endValue, intervalValue);
 
         const axisX = chart.scales['x-axis-1'];
         const axisY = chart.scales['y-axis-1'];
@@ -216,7 +201,7 @@ function createColorScale(chart, draw) {
         // get rounded end value
         endValue = points[points.length - 1] + intervalValue;
 
-        drawLegendAxis(ctx, startPoint + barWidth, startValue, endValue, minSamples, maxSamples, valueScale);
+        drawLegendAxis(ctx, startPoint + barWidth, startValue, endValue);
 
         // Draw XY line
         const minMaxXY = Math.min(axisX.max, axisY.max);
@@ -239,7 +224,15 @@ function createColorScale(chart, draw) {
 
 // http://usefulangle.com/post/17/html5-canvas-drawing-1px-crisp-straight-lines
 // http://usefulangle.com/post/19/html5-canvas-tutorial-how-to-draw-graphical-coordinate-system-with-grids-and-axis
-function drawLegendAxis(ctx, startPointLeft, startValue, endValue, minSamples, maxSamples, valueScale) {
+/**
+ * Draw the color scale legend axis
+ *
+ * @param ctx
+ * @param startPointLeft
+ * @param startValue
+ * @param endValue
+ */
+function drawLegendAxis(ctx, startPointLeft, startValue, endValue) {
     ctx.lineWidth = 1;
     ctx.strokeStyle = "#000000";
     ctx.fillStyle = "#000000";
@@ -266,14 +259,21 @@ function drawLegendAxis(ctx, startPointLeft, startValue, endValue, minSamples, m
         ctx.lineTo(startPointLeft + 6, posY);
         ctx.stroke();
 
-        ctx.font = '10px Arial';
+        ctx.font = `10px ${Chart.defaults.global.defaultFontFamily}`;
         ctx.fillText(`${'10 '}`, startPointLeft + 9, posY);
 
-        ctx.font = '9px Arial';
+        ctx.font = `9px ${Chart.defaults.global.defaultFontFamily}`;
         ctx.fillText(`${i}`, startPointLeft + 20, posY - 7);
     }
 }
 
+/**
+ * Extension to draw a polygon in a canvas 2DContext
+ *
+ * @param pointsArray
+ * @param fillColor
+ * @param strokeColor
+ */
 CanvasRenderingContext2D.prototype.polygon = function (pointsArray, fillColor, strokeColor) {
     if (pointsArray.length <= 0)
         return;
@@ -303,5 +303,63 @@ CanvasRenderingContext2D.prototype.polygon = function (pointsArray, fillColor, s
 
     this.restore();
 };
+
+/**
+ * Assumes h, s, and l are contained in the set [0, 1]
+ * thanks to https://codepen.io/anon/pen/ZPqQdM
+ *
+ * @param a
+ * @param b
+ * @param o
+ * @returns {String}
+ */
+function interpolateHSL(a, b, o) {
+    const len = a.length;
+    const hsl = Array(len);
+
+    for (let i = 0; i < len; i++) {
+        let a1 = a[i];
+        hsl[i] = a1 + (b[i] - a1) * o;
+    }
+
+    return hslToRgb(hsl[0], hsl[1], hsl[2]);
+}
+
+/**
+ * Converts an HSL color value to RGB. Conversion formula
+ * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
+ * Assumes h, s, and l are contained in the set [0, 1] and
+ * returns r, g, and b in the set [0, 255].
+ *
+ * @param   {number}  h       The hue
+ * @param   {number}  s       The saturation
+ * @param   {number}  l       The lightness
+ * @return  {String}          The RGB representation
+ */
+function hslToRgb(h, s, l) {
+    var r, g, b;
+
+    if (s === 0) {
+        r = g = b = l; // achromatic
+    } else {
+        const hue2rgb = function hue2rgb(p, q, t) {
+            if (t < 0) t += 1;
+            if (t > 1) t -= 1;
+            if (t < 1 / 6) return p + (q - p) * 6 * t;
+            if (t < 1 / 2) return q;
+            if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+            return p;
+        };
+
+        const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        const p = 2 * l - q;
+
+        r = hue2rgb(p, q, h + 1 / 3);
+        g = hue2rgb(p, q, h);
+        b = hue2rgb(p, q, h - 1 / 3);
+    }
+
+    return `rgb(${Math.round(r * 255)}, ${Math.round(g * 255)}, ${Math.round(b * 255)})`;
+}
 
 export default stanfordDiagramPlugin;

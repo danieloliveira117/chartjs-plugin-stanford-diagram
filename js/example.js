@@ -82,7 +82,7 @@ window.onload = () => {
             tooltips: {
                 enabled: true,
                 callbacks: {
-                    label: function(item, data) {
+                    label: function (item, data) {
                         return `S: ${data.datasets[0].data[item.index].samples}   (${item.xLabel}, ${item.yLabel})`;
                     }
                 }
@@ -90,24 +90,6 @@ window.onload = () => {
             hover: {
                 mode: null
             },
-            // annotation: { // https://github.com/chartjs/chartjs-plugin-annotation
-            //     annotations: [{
-            //         type: 'line',
-            //         scaleID: 'x-axis-1',
-            //         mode: 'vertical',
-            //         value: 40,
-            //         borderColor: 'rgba(0, 120, 220, 0.5)',
-            //         borderWidth: 1
-            //     },
-            //     {
-            //         type: 'line',
-            //         scaleID: 'y-axis-1',
-            //         mode: 'horizontal',
-            //         value: 40,
-            //         borderColor: 'rgba(220, 0, 0, 0.5)',
-            //         borderWidth: 1
-            //     }]
-            // },
             stanfordChart: {
                 regions: [
                     {
