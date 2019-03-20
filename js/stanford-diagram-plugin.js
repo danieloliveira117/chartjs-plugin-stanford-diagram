@@ -176,6 +176,7 @@ function createColorScale(chart, draw) {
     const intervalValue = barHeight;
     let endValue = chart.chartArea.bottom - 15;
 
+
     const colorScale = scaleSequential((value) => interpolateHSL([0.7, 1, 0.5], [0, 1, 0.5], value))
         .domain([startValue, endValue]);
 
@@ -239,8 +240,8 @@ function drawLegendAxis(ctx, startPointLeft, startValue, endValue) {
 
     // Vertical Line
     ctx.beginPath();
-    ctx.moveTo(startPointLeft + 0.5, startValue);
-    ctx.lineTo(startPointLeft + 0.5, endValue);
+    ctx.moveTo(startPointLeft + 0.5, 0);
+    ctx.lineTo(startPointLeft + 0.5, endValue - startValue);
     ctx.stroke();
 
     // Text value at that point
