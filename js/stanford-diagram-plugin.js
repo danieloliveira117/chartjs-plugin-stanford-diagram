@@ -39,9 +39,11 @@
  resize
  destroy
  */
-const colorScalePlugin = {
+const stanfordDiagramPlugin = {
     beforeInit: function (chartInstance) {
-        const ns = chartInstance.stanfordDiagramPlugin = {};
+        const ns = chartInstance.stanfordDiagramPlugin = {
+            options: getStanfordConfig(chartInstance.options),
+        };
 
         ns.colorScale = undefined;
 
@@ -58,6 +60,8 @@ const colorScalePlugin = {
             chartInstance.update();
         } else {
             ns.colorScale = createColorScale(chartInstance, true);
+
+            drawRegions(chartInstance, ns.options.regions);
         }
     },
     beforeDatasetsUpdate: function (chartInstance) {
@@ -74,6 +78,104 @@ const colorScalePlugin = {
     },
 };
 
+// function initConfig(chartInstance, config) {
+//     const chartHelpers = chartInstance.helpers;
+//
+//     config = chartHelpers.configMerge(Chart.Annotation.defaults, config);
+//
+//     if (chartHelpers.isArray(config.annotations)) {
+//         config.stanfordChart.forEach(function(annotation) {
+//             annotation.label = chartHelpers.configMerge(Chart.Annotation.labelDefaults, annotation.label);
+//         });
+//     }
+//
+//     return config;
+// }
+
+function getStanfordConfig(chartOptions) {
+    const plugins = chartOptions.plugins;
+    const pluginAnnotation = plugins && plugins.stanfordChart ? plugins.stanfordChart : null;
+
+    return pluginAnnotation || chartOptions.stanfordChart || {};
+}
+
+function drawRegions(chart, regions) {
+    const ctx = chart.ctx;
+
+    regions.forEach(function (element) {
+        ctx.polygon(getPixelValue(chart, element.points), element.fillColor, element.strokeColor);
+
+        if(element.text) {
+            drawRegionText(chart, element.text, element.points);
+        }
+    });
+}
+
+function drawRegionText(chart, text, points) {
+    const ctx = chart.ctx;
+    const axisX = chart.scales['x-axis-1'];
+    const axisY = chart.scales['y-axis-1'];
+
+    const total = chart.data.datasets[0].data.reduce((accumulator, currentValue) => accumulator + Number(currentValue.samples), 0);
+
+    // Count how many points are in Region
+    const count = chart.data.datasets[0].data.reduce((accumulator, currentValue) => {
+        if(pointInPolygon(currentValue, points)) {
+            return accumulator + Number(currentValue.samples);
+        }
+
+        return accumulator;
+    }, 0);
+
+    const percentage = count !== 0 ? (count / total * 100).toFixed(1) : 0;
+
+    // Get text
+    const content = text.format ? text.format(count, percentage) : `${count} (${percentage})`;
+
+    console.log(total, count, percentage, content);
+
+    ctx.save();
+    ctx.font = text.font ? text.font : "11px Arial, sans-serif";
+    ctx.fillStyle = text.color;
+    ctx.fillText(content, axisX.getPixelForValue(text.x), axisY.getPixelForValue(text.y));
+    ctx.restore();
+}
+
+function getPixelValue(chart, points) {
+    const axisX = chart.scales['x-axis-1'];
+    const axisY = chart.scales['y-axis-1'];
+
+    return points.map(p => {
+        return {x: axisX.getPixelForValue(p.x), y: axisY.getPixelForValue(p.y)}
+    });
+}
+
+function pointInPolygon(point, polygon) { // thanks to: http://bl.ocks.org/bycoffe/5575904
+    // ray-casting algorithm based on
+    // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+    let xi, yi, yj, xj, intersect,
+        x = point.x,
+        y = point.y,
+        inside = false;
+
+    for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+
+        xi = polygon[i].x;
+        yi = polygon[i].y;
+
+        xj = polygon[j].x;
+        yj = polygon[j].y;
+
+        intersect = ((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+
+        if (intersect) {
+            inside = !inside;
+        }
+    }
+
+    return inside;
+}
+
 function createColorScale(chart, draw) {
     const ctx = chart.ctx;
 
@@ -83,9 +185,9 @@ function createColorScale(chart, draw) {
     const barWidth = 25;
     const barHeight = 5;
 
-    const startValue = chart.chartArea.top;
+    const startValue = chart.chartArea.top + 15;
     const intervalValue = barHeight;
-    let endValue = chart.chartArea.bottom;
+    let endValue = chart.chartArea.bottom - 15;
 
     const colorScale = d3.scaleSequential(d3.interpolateHslLong(d3.hsl(250, 1, 0.5), d3.hsl(0, 1, 0.5)))
         .domain([startValue, endValue]);
@@ -93,7 +195,7 @@ function createColorScale(chart, draw) {
     // const colorScale = d3.scaleSequential([startValue, endValue], d3.interpolatePlasma);
 
     const valueScale = d3.scaleLog()
-        .domain([minSamples, maxSamples])
+        .domain([1, 10000])
         .range([startValue, endValue]);
 
     if (draw) {
@@ -149,32 +251,57 @@ function drawLegendAxis(ctx, startPointLeft, startValue, endValue, minSamples, m
     ctx.stroke();
 
     // Text value at that point
-    ctx.font = 'bold 12px Arial';
+    // ctx.font = 'bold 12px Arial';
     ctx.textAlign = 'start';
     ctx.textBaseline = "middle";
 
     // Ticks marks along the positive Y-axis
     // Positive Y-axis of graph is negative Y-axis of the canvas
-    // const ratio = (maxSamples - 1) / (endValue - startValue);
-    // const roundedRatio = ratio.toFixed(1) * 20 || 1;
+    for (let i = 0; i < 5; i++) {
+        const posY = endValue - ((endValue - startValue) / 4 * i);
 
-    // let test = valueScale.nice();
-
-    // for (let i = minSamples; i <= maxSamples; i += roundedRatio) {
-    for (let i = minSamples; i <= maxSamples; i++) {
-        console.log(i, valueScale(i));
         ctx.beginPath();
 
-        // Draw a tick mark 6px long (-3 to 3)
-        // ctx.moveTo(startPointLeft, endValue - scale(i) + startValue);
-        // ctx.lineTo(startPointLeft + 6, endValue - scale(i) + startValue);
-        ctx.moveTo(startPointLeft, endValue - valueScale(i));
-        ctx.lineTo(startPointLeft + 6, endValue - valueScale(i));
+        ctx.moveTo(startPointLeft, posY);
+        ctx.lineTo(startPointLeft + 6, posY);
         ctx.stroke();
 
-        // ctx.fillText(`${scaleLog(i)}`, startPointLeft + 9, endValue - scale(i) + startValue);
-        ctx.fillText(`${i}`, startPointLeft + 9, endValue - valueScale(i));
+        ctx.font = '10px Arial';
+        ctx.fillText(`${'10 '}`, startPointLeft + 9, posY);
+
+        ctx.font = '9px Arial';
+        ctx.fillText(`${i}`, startPointLeft + 20, posY - 7);
     }
 }
 
-export default colorScalePlugin;
+CanvasRenderingContext2D.prototype.polygon = function (pointsArray, fillColor, strokeColor) {
+    if (pointsArray.length <= 0)
+        return;
+
+    this.save();
+    this.globalCompositeOperation = 'destination-over'; // draw behind existing pixels https://stackoverflow.com/questions/9165766/html5-canvas-set-z-index/26064753
+
+    this.beginPath();
+    this.moveTo(pointsArray[0].x, pointsArray[0].y)
+
+    for (let i = 1; i < pointsArray.length; i++) {
+        this.lineTo(pointsArray[i].x, pointsArray[i].y);
+    }
+
+    this.closePath();
+
+    if (strokeColor) {
+        this.lineWidth = 1;
+        this.strokeStyle = strokeColor;
+        this.stroke();
+    }
+
+    if (fillColor) {
+        this.fillStyle = fillColor;
+        this.fill();
+    }
+
+    this.restore();
+};
+
+export default stanfordDiagramPlugin;

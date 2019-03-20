@@ -1,4 +1,4 @@
-import horizontalData from '../dataset/horizontalData.js';
+import horizontalData from '../dataset/horizontalData.5.js';
 import stanfordDiagramPlugin from './stanford-diagram-plugin.js';
 
 function compareSamples(a, b) {
@@ -45,12 +45,13 @@ window.onload = () => {
             datasets: [
                 {
                     data: chartData,
-                    radius: 1,
+                    radius: 4,
+                    pointStyle: 'rect'
                 },
             ]
         },
         options: {
-            // aspectRatio: 1.12,
+            aspectRatio: 1.12,
             // maintainAspectRatio: true,
             animation: false,
             legend: {
@@ -89,48 +90,126 @@ window.onload = () => {
             hover: {
                 mode: null
             },
-            annotation: { // https://github.com/chartjs/chartjs-plugin-annotation
-                annotations: [{
-                    type: 'line',
-                    scaleID: 'x-axis-1',
-                    mode: 'vertical',
-                    value: 40,
-                    endValue: 40,
-                    borderColor: 'rgba(0, 120, 220, 0.5)',
-                    borderWidth: 1,
-                    label: {
-                        enabled: true,
-                        backgroundColor: 'rgba(0, 120, 220, 0.5)',
-                        fontColor: 'rgba(255, 255, 255, 0.5)',
-                        content: 'Accuracy',
-                        position: 'top',
-                        yAdjust: 0,
-                        xAdjust: 0,
-                        xPadding: 6,
-                        yPadding: 6
-                    }
-                },
-                {
-                    type: 'line',
-                    scaleID: 'y-axis-1',
-                    mode: 'horizontal',
-                    value: 40,
-                    borderColor: 'rgba(220, 0, 0, 0.5)',
-                    borderWidth: 1,
-                    label: {
-                        enabled: true,
-                        backgroundColor: 'rgba(220, 0, 0, 0.5)',
-                        fontColor: 'rgba(255, 255, 255, 0.5)',
-                        content: 'Accuracy',
-                        position: 'right',
-                        yAdjust: 0,
-                        xAdjust: 0,
-                        xPadding: 6,
-                        yPadding: 6
-                    }
-                }]
+            // annotation: { // https://github.com/chartjs/chartjs-plugin-annotation
+            //     annotations: [{
+            //         type: 'line',
+            //         scaleID: 'x-axis-1',
+            //         mode: 'vertical',
+            //         value: 40,
+            //         borderColor: 'rgba(0, 120, 220, 0.5)',
+            //         borderWidth: 1
+            //     },
+            //     {
+            //         type: 'line',
+            //         scaleID: 'y-axis-1',
+            //         mode: 'horizontal',
+            //         value: 40,
+            //         borderColor: 'rgba(220, 0, 0, 0.5)',
+            //         borderWidth: 1
+            //     }]
+            // },
+            stanfordChart: {
+                regions: [
+                    {
+                        points: [ // add points counter-clockwise
+                            {x: 0, y: 0},
+                            {x: 40, y: 40},
+                            {x: 0, y: 40},
+                        ],
+                        // fillColor: 'rgba(255, 0, 0, 0.2)',
+                        strokeColor: 'rgba(0, 0, 0, 0.5)',
+                        text: {
+                            x: 15,
+                            y: 35,
+                            color: 'black',
+                            format: function (value, percentage) {
+                                return `Normal Operations:\n${value} (${percentage}%)`;
+                            }
+                        }
+                    }, {
+                        points: [
+                            {x: 0, y: 0},
+                            {x: 40, y: 0},
+                            {x: 40, y: 40},
+                        ],
+                        fillColor: 'rgba(255, 165, 0, 0.2)',
+                        strokeColor: 'rgba(0, 0, 0, 0.5)',
+                        text: {
+                            x: 25,
+                            y: 15,
+                            color: 'black',
+                            format: function (value, percentage) {
+                                return `MI:\n${value} (${percentage}%)`;
+                            }
+                        }
+                    }, {
+                        points: [
+                            {x: 40, y: 0},
+                            {x: 60, y: 0},
+                            {x: 60, y: 40},
+                            {x: 40, y: 40},
+                        ],
+                        fillColor: 'rgba(255, 0, 0, 0.2)',
+                        strokeColor: 'rgba(0, 0, 0, 0.5)',
+                        text: {
+                            x: 44,
+                            y: 32,
+                            color: 'black',
+                            format: function (value, percentage) {
+                                return `HMI:\n${value} (${percentage}%)`;
+                            }
+                        }
+                    },
+                    {
+                        points: [
+                            {x: 0, y: 40},
+                            {x: 40, y: 40},
+                            {x: 60, y: 60},
+                            {x: 0, y: 60},
+                        ],
+                        fillColor: 'rgba(128, 128, 128, 0.2)',
+                        strokeColor: 'rgba(0, 0, 0, 0.5)',
+                        text: {
+                            x: 25,
+                            y: 52,
+                            color: 'black',
+                            format: function (value, percentage) {
+                                return `Unavailable Epochs:\n${value} (${percentage}%)`;
+                            }
+                        }
+                    },
+                    {
+                        points: [
+                            {x: 40, y: 40},
+                            {x: 60, y: 40},
+                            {x: 60, y: 60}
+                        ],
+                        fillColor: 'rgba(255, 165, 0, 0.2)',
+                        strokeColor: 'rgba(0, 0, 0, 0.5)',
+                        text: {
+                            x: 50,
+                            y: 45,
+                            color: 'black',
+                            format: function (value, percentage) {
+                                return `MI:\n${value} (${percentage}%)`;
+                            }
+                        }
+                    },
+                ]
             }
         },
         plugins: [stanfordDiagramPlugin]
     });
 };
+
+// label: {
+//     enabled: false,
+//     backgroundColor: 'rgba(220, 0, 0, 0.5)',
+//     fontColor: 'rgba(255, 255, 255, 0.5)',
+//     content: 'Accuracy',
+//     position: 'right',
+//     yAdjust: 0,
+//     xAdjust: 0,
+//     xPadding: 6,
+//     yPadding: 6
+// }
