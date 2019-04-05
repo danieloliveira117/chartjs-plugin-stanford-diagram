@@ -1,16 +1,44 @@
 {
-  "name": "stanford-chartjs",
-  "version": "1.0.0",
-  "description": "Stanford Diagram on chartjs",
-  "main": "js/stanford-diagram-plugin.js",
-  "scripts": {
-    "start": "live-server --port=1234",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "Daniel Olivera <daniel-oliveira@present-technologies.com>",
+  "name": "chartjs-plugin-stanford-diagram",
+  "author": "Daniel Oliveira <daniel-oliveira@present-technologies.com>",
+  "version": "0.0.1",
+  "description": "Stanford Diagram on Chart.js",
+  "main": "dist/chartjs-plugin-stanford-diagram.js",
   "license": "MIT",
+  "keywords": [
+    "chartjs",
+    "stanford",
+    "plot",
+    "diagram",
+    "chart",
+    "plugin"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FreezinG117/chartjs-plugin-stanford-diagram.git"
+  },
+  "bugs": {
+    "url": "https://github.com/FreezinG117/chartjs-plugin-stanford-diagram/issues"
+  },
+  "scripts": {
+	  "start": "npm-run-all --parallel watch serve",
+    "serve": "serve",
+    "build": "rollup -c",
+    "watch": "rollup -c -w"
+  },
   "dependencies": {
-    "chart.js": "^2.8.0",
-    "live-server": "^1.2.1"
+    "chart.js": "^2.8.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.16.0",
+    "npm-run-all": "^4.1.5",
+    "rollup": "^1.9.0",
+    "rollup-plugin-commonjs": "^9.3.4",
+    "rollup-plugin-eslint": "^5.1.0",
+    "rollup-plugin-node-resolve": "^4.1.0",
+    "rollup-plugin-terser": "^4.0.4",
+    "serve": "^11.0.0"
   }
 }
