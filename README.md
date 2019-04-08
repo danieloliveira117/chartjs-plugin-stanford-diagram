@@ -1,19 +1,24 @@
 # Stanford Diagram on Chartjs
 
-## Data
+This plugin adds support for [Stanford Diagrams](https://gssc.esa.int/navipedia/index.php/The_Stanford_%E2%80%93_ESA_Integrity_Diagram:_Focusing_on_SBAS_Integrity) on Chartjs.
+
+![Screenshot](https://i.imgur.com/ObA1s7Y.png)
+
+## Configuration
+
+### Data
 
 Use an array of objects like one shown bellow:
 
-* **Object**
-    ```javascript
-    {
-      x: VALUE,
-      y: VALUE,
-      epochs: VALUE
-    }
-    ```
+  ```javascript
+  {
+    x: VALUE,
+    y: VALUE,
+    epochs: VALUE
+  }
+  ```
 
-## Regions
+### Regions
 You can regions to your chart (any type of polygon).
 
 A region can be only a polygon outline, a filled polygon or both. (Don't forget to add a color to *fillColor* or/and *strokeColor*)
@@ -44,13 +49,12 @@ You can add text associated to the polygon, as show in the object below.
 }
 ```
 
-## Other Configurations
+### Other Configurations
 
-* **Tooltip**
-    - You can get the epoch value by using the item index, for example:
-        ```javascript
-            let epochs = data.datasets[0].data[item.index].epochs;
-        ```
+**Tooltip**: You can get the epoch value by using the item index, for example:
+  ```javascript
+      let epochs = data.datasets[0].data[item.index].epochs;
+  ```
 
 ## Example
 
@@ -110,3 +114,9 @@ new Chart(ctx, {
   plugins: [stanfordDiagramPlugin]
 });
 ```
+
+## Building
+
+1. `npm install`
+1. `npm run build`
+
