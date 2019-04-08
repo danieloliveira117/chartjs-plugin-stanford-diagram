@@ -1,6 +1,6 @@
-# Stanford Diagram on Chartjs
+# Chart.js Stanford Diagram plugin
 
-This plugin adds support for [Stanford Diagrams](https://gssc.esa.int/navipedia/index.php/The_Stanford_%E2%80%93_ESA_Integrity_Diagram:_Focusing_on_SBAS_Integrity) on Chartjs.
+Adds support for [Stanford Diagrams](https://gssc.esa.int/navipedia/index.php/The_Stanford_%E2%80%93_ESA_Integrity_Diagram:_Focusing_on_SBAS_Integrity) to Chart.js.
 
 ![Screenshot](https://i.imgur.com/ObA1s7Y.png)
 
@@ -8,42 +8,44 @@ This plugin adds support for [Stanford Diagrams](https://gssc.esa.int/navipedia/
 
 ### Data
 
-Use an array of objects like one shown bellow:
+Use an array of objects as shown bellow:
 
-  ```javascript
-  {
-    x: VALUE,
-    y: VALUE,
-    epochs: VALUE
-  }
-  ```
+```js
+{
+  x: VALUE,
+  y: VALUE,
+  epochs: VALUE
+}
+```
 
 ### Regions
+
 You can regions to your chart (any type of polygon).
 
-A region can be only a polygon outline, a filled polygon or both. (Don't forget to add a color to *fillColor* or/and *strokeColor*)
+A region can be a polygon outline, a filled polygon or both. **WARN:** You need to add a color to `fillColor` or `strokeColor`.
 
-You can add text associated to the polygon, as show in the object below.
+You can also add text associated to the polygon, as show in the object below.
 
 **Region Object**
-```javascript
+
+```js
 {
-  points: [ // add any number of points counterclockwise
+  points: [ // Add any number of points counterclockwise
     { x: VALUE1, y: VALUE1 },
     { x: VALUE2, y: VALUE2 },
     { x: VALUE3, y: VALUE3 }
   ],
-  fillColor: 'anycolor', // Optional. Add a color if you want the region to be filled
-  strokeColor: 'anycolor', // Optional. Add a color if you want the region to have a stroke
-  text: { // Text is Optional
+  fillColor: 'anycolor', // Optional. Add a color to fill the region
+  strokeColor: 'anycolor', // Optional. Add a color to stroke the region
+  text: { // Optional
     x: VALUE,
     y: VALUE,
     color: 'anycolor',
     format: function (count, percentage) {
-    // Count - Number of epochs in the region
-    // Percentage - Percentage of epochs in the region
+      // Count: The number of epochs in the region
+      // Percentage: The percentage of epochs in the region
 
-    return 'anystring';
+      return 'anystring';
     }
   }
 }
@@ -51,15 +53,17 @@ You can add text associated to the polygon, as show in the object below.
 
 ### Other Configurations
 
-**Tooltip**: You can get the epoch value by using the item index, for example:
+#### Tooltip
 
-```javascript
+You can get the epoch value by using the item index:
+
+```js
 let epochs = data.datasets[0].data[item.index].epochs;
 ```
 
 ## Example
 
-```javascript
+```js
 import stanfordDiagramPlugin from "./chartjs-plugin-stanford-diagram.min.js";
 
 const ctx = document.getElementById('myChart')
@@ -97,7 +101,7 @@ new Chart(ctx, {
       stanfordDiagram: {
         regions: [
           {
-            points: [ // add points counter-clockwise
+            points: [ // Add points counter-clockwise
               { x: 0, y: 0 },
               { x: 40, y: 40 },
               { x: 0, y: 40 },
@@ -123,6 +127,9 @@ new Chart(ctx, {
 
 ## Building
 
-1. `npm install`
-1. `npm run build`
+To build the plugin run:
 
+```sh
+npm install
+npm run build
+```
