@@ -52,13 +52,19 @@ You can add text associated to the polygon, as show in the object below.
 ### Other Configurations
 
 **Tooltip**: You can get the epoch value by using the item index, for example:
-  ```javascript
-      let epochs = data.datasets[0].data[item.index].epochs;
-  ```
+
+```javascript
+let epochs = data.datasets[0].data[item.index].epochs;
+```
 
 ## Example
 
 ```javascript
+import stanfordDiagramPlugin from "./chartjs-plugin-stanford-diagram.min.js";
+
+const ctx = document.getElementById('myChart')
+  .getContext('2d');
+
 new Chart(ctx, {
   type: 'stanford',
   data: {
