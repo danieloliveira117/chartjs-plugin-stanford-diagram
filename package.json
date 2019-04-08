@@ -21,9 +21,8 @@
     "url": "https://github.com/FreezinG117/chartjs-plugin-stanford-diagram/issues"
   },
   "scripts": {
-    "start": "npm run watch",
-    "build": "rollup -c",
-    "watch": "rollup -c -w"
+    "start": "rollup -c -w",
+    "build": "rollup -c"
   },
   "dependencies": {
     "chart.js": "^2.8.0"
