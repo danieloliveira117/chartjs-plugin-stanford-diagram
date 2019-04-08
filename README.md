@@ -46,13 +46,6 @@ You can add text associated to the polygon, as show in the object below.
 
 ## Other Configurations
 
-* **Type**
-    - Set to 'scatter'
-
-* **Recommended Scale Ticks**
-    - set `beginAtZero` as true
-    - Change `suggestedMax` of each axis to 60
-
 * **Tooltip**
     - You can get the epoch value by using the item index, for example:
         ```javascript
@@ -63,7 +56,7 @@ You can add text associated to the polygon, as show in the object below.
 
 ```javascript
 new Chart(ctx, {
-  type: 'scatter',
+  type: 'stanford',
   data: {
     labels: 'Custom Data Set',
     datasets: [
@@ -71,50 +64,24 @@ new Chart(ctx, {
         data: [
           { x: 1, y: 3, epochs: 5 },
           { x: 5, y: 9, epochs: 15 }
-        ],
-        radius: 4,
-        pointStyle: 'rect'
+        ]
       }
     ]
   },
   options: {
-    aspectRatio: 1.12,
-    animation: false,
-    legend: {
-      display: false
-    },
     scales: {
       xAxes: [{
         scaleLabel: {
           display: true,
           labelString: 'HPE (m)'
-        },
-        ticks: {
-          suggestedMax: 60,
-          beginAtZero: true
         }
       }],
       yAxes: [{
         scaleLabel: {
           display: true,
           labelString: 'HPL (m)'
-        },
-        ticks: {
-          suggestedMax: 60,
-          beginAtZero: true
         }
       }]
-    },
-    tooltips: {
-      enabled: true,
-      callbacks: {
-        label: function (item, data) {
-          return `S: ${data.datasets[0].data[item.index].epochs}   (${item.xLabel}, ${item.yLabel})`;
-        }
-      }
-    },
-    hover: {
-      mode: null
     },
     plugins: {
       stanfordDiagram: {
