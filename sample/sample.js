@@ -14,56 +14,29 @@ const ctx = document.getElementById('myChart')
   .getContext('2d');
 
 new Chart(ctx, {
-  type: 'scatter',
+  type: 'stanford',
   data: {
     labels: 'Horizontal Data Set',
     datasets: [
       {
-        data: chartData,
-        radius: 4,
-        pointStyle: 'rect'
-      },
+        data: chartData
+      }
     ]
   },
   options: {
-    aspectRatio: 1.12,
-    // maintainAspectRatio: true,
-    animation: false,
-    legend: {
-      display: false
-    },
     scales: { // https://www.chartjs.org/docs/latest/axes/labelling.html#scale-title-configuration
-      xAxes: [{
-        scaleLabel: {
+          xAxes: [{
+            scaleLabel: {
           display: true,
           labelString: 'HPE (m)'
-        },
-        ticks: {
-          suggestedMax: 60,
-          beginAtZero: true
         }
       }],
       yAxes: [{
         scaleLabel: {
           display: true,
           labelString: 'HPL (m)'
-        },
-        ticks: {
-          suggestedMax: 60,
-          beginAtZero: true
         }
       }]
-    },
-    tooltips: {
-      enabled: true,
-      callbacks: {
-        label: function (item, data) {
-          return `S: ${data.datasets[0].data[item.index].epochs}   (${item.xLabel}, ${item.yLabel})`;
-        }
-      }
-    },
-    hover: {
-      mode: null
     },
     plugins: {
       stanfordDiagram: {

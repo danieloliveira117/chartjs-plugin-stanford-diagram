@@ -258,7 +258,58 @@ CanvasRenderingContext2D.prototype.polygon = function (pointsArray, fillColor, s
   this.restore();
 };
 
-// TODO https://www.chartjs.org/docs/latest/developers/charts.html
+/**
+ * Stanford Diagram -- chart type
+ */
+Chart.controllers.stanford = Chart.controllers.line;
+
+Chart.defaults._set('stanford', {
+  animation: false,
+  aspectRatio: 1.12,
+  elements: {
+    point: {
+      radius: 4,
+      pointStyle: 'rect'
+    }
+  },
+  hover: {
+    mode: null
+  },
+  legend: {
+    display: false
+  },
+  scales: {
+    xAxes: [{
+      id: 'x-axis-1',    // need an ID so datasets can reference the scale
+      type: 'linear',    // stanford should not use a category axis
+      position: 'bottom',
+      ticks: {
+        suggestedMax: 60,
+        beginAtZero: true
+      }
+    }],
+    yAxes: [{
+      id: 'y-axis-1',
+      type: 'linear',
+      position: 'left',
+      ticks: {
+        suggestedMax: 60,
+        beginAtZero: true
+      }
+    }]
+  },
+  showLines: false,
+  tooltips: {
+    callbacks: {
+      title: function() {
+        return '';     // doesn't make sense for stanford since data are formatted as a point
+      },
+      label: function (item, data) {
+        return `S: ${data.datasets[0].data[item.index].epochs}   (${item.xLabel}, ${item.yLabel})`;
+      }
+    }
+  }
+});
 
 /**
  * Stanford Diagram Plugin
