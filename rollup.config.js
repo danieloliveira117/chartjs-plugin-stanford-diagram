@@ -1,5 +1,7 @@
 import resolve from "rollup-plugin-node-resolve";
 import commonjs from "rollup-plugin-commonjs";
+import serve from 'rollup-plugin-serve'
+import livereload from 'rollup-plugin-livereload'
 import { terser } from "rollup-plugin-terser";
 import { eslint } from "rollup-plugin-eslint";
 
@@ -16,8 +18,16 @@ export default {
 	},
 	plugins: [
 		resolve(),
-		commonjs(), // converts date-fns to ES modules
+		commonjs(),
 		eslint(),
-		production && terser(),
+    !production && serve({
+      open: true,
+      openPage: '/sample/',
+      contentBase: ''
+    }),
+    !production && livereload({
+      watch: 'dist'
+    }),
+		production && terser()
 	],
 };
