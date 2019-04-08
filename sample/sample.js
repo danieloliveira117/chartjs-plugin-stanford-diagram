@@ -2,8 +2,6 @@ import originalData from './data.js';
 import { compareEpochs, logDataValues } from './utils.js';
 import stanfordDiagramPlugin from '../dist/chartjs-plugin-stanford-diagram.js';
 
-originalData.sort(compareEpochs); // draw bigger epochs later
-
 logDataValues(originalData);
 
 const chartData = originalData.map(function (e) {
