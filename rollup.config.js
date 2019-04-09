@@ -13,7 +13,7 @@ export default {
 	input: "src/stanford-diagram.js",
 	output: {
 		file: production ? "dist/chartjs-plugin-stanford-diagram.min.js" : "dist/chartjs-plugin-stanford-diagram.js",
-		format: "es",
+		format: "esm",
 		sourcemap: production
 	},
 	plugins: [

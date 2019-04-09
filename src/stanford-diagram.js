@@ -1,4 +1,4 @@
-import { range, scaleSequential, scaleLog, interpolateHSL } from './stanford-utils';
+import { range, scaleSequential, scaleLog, interpolateHSL } from './stanford-utils.js';
 
 /**
  * Get the stanfordPlugin options
@@ -6,7 +6,7 @@ import { range, scaleSequential, scaleLog, interpolateHSL } from './stanford-uti
  * @param chartOptions
  * @returns {*|options.stanfordDiagram|{regions}|{}}
  */
-function getStanfordConfig(chartOptions) {
+export function getStanfordConfig(chartOptions) {
   const { plugins } = chartOptions;
   const pluginStanfordChart = plugins && plugins.stanfordDiagram ? plugins.stanfordDiagram : null;
 
@@ -34,17 +34,13 @@ function drawRegions(chart, regions) {
 }
 
 /**
- * Draws the amount of points in a region
+ * Get the number of points in a polygon
  *
- * @param chart
- * @param text
- * @param points
+ * @param chart - Chart.js instance
+ * @param points - Array of points
+ * @returns {{percentage: string, value: number}}
  */
-function drawRegionText(chart, text, points) {
-  const { ctx } = chart;
-  const axisX = chart.scales['x-axis-1'];
-  const axisY = chart.scales['y-axis-1'];
-
+export function countEpochsInRegion(chart, points) {
   const total = chart.data.datasets[0].data.reduce((accumulator, currentValue) => accumulator + Number(currentValue.epochs), 0);
 
   // Count how many points are in Region
@@ -56,7 +52,25 @@ function drawRegionText(chart, text, points) {
     return accumulator;
   }, 0);
 
-  const percentage = count !== 0 ? (count / total * 100).toFixed(1) : 0;
+  return {
+    value: count,
+    percentage: count !== 0 ? (count / total * 100).toFixed(1) : 0
+  };
+}
+
+/**
+ * Draws the amount of points in a region
+ *
+ * @param chart
+ * @param text
+ * @param points
+ */
+function drawRegionText(chart, text, points) {
+  const { ctx } = chart;
+  const axisX = chart.scales['x-axis-1'];
+  const axisY = chart.scales['y-axis-1'];
+
+  const {count, percentage} = countEpochsInRegion(chart, points);
 
   // Get text
   const content = text.format ? text.format(count, percentage) : `${count} (${percentage})`;
@@ -91,7 +105,7 @@ function getPixelValue(chart, points) {
  * @param polygon
  * @returns {boolean}
  */
-function pointInPolygon(point, polygon) {
+export function pointInPolygon(point, polygon) {
   // ray-casting algorithm based on
   // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
   let xi; let yi; let yj; let xj; let intersect;
