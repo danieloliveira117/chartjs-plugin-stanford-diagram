@@ -272,7 +272,7 @@ CanvasRenderingContext2D.prototype.polygon = function(pointsArray, fillColor, st
 Chart.controllers.stanford = Chart.controllers.line.extend({
   update: function() {
     // "Responsive" point radius
-    this.chart.options.elements.point.radius = Math.round(this.chart.height / 200);
+    this.chart.options.elements.point.radius = Math.max(Math.round(this.chart.height / 200), 1);
 
     Chart.controllers.line.prototype.update.apply(this, arguments);
   }
@@ -354,8 +354,8 @@ const stanfordDiagramPlugin = {
     }
   },
   beforeUpdate(c) {
-    // "Responsive" font-size
-    c.chart.options.defaultFontSize = Math.round(c.chart.height / 50);
+    // "Responsive" font-size with a min size of 8px
+    c.chart.options.defaultFontSize = Math.max(Math.round(c.chart.height / 50), 8);
   },
   afterRender(c) {
 
