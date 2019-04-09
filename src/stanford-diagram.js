@@ -76,7 +76,7 @@ function drawRegionText(chart, text, points) {
   const content = text.format ? text.format(count, percentage) : `${count} (${percentage})`;
 
   ctx.save();
-  ctx.font = text.font ? text.font : `11px ${Chart.defaults.global.defaultFontFamily}`;
+  ctx.font = text.font ? text.font : `${Chart.defaults.global.defaultFontSize}px ${Chart.defaults.global.defaultFontFamily}`;
   ctx.fillStyle = text.color ? text.color : Chart.defaults.global.defaultFontColor;
   ctx.textBaseline = 'middle';
   ctx.fillText(content, axisX.getPixelForValue(text.x), axisY.getPixelForValue(text.y));
@@ -143,10 +143,9 @@ function createColorScale(chart, draw) {
   const barWidth = 25;
   const barHeight = 5;
 
-  const startValue = chart.chartArea.top + 15;
+  const startValue = chart.chartArea.top + 5;
   const intervalValue = barHeight;
-  let endValue = chart.chartArea.bottom - 15;
-
+  let endValue = chart.chartArea.bottom;
 
   const colorScale = scaleSequential(value => interpolateHSL([0.7, 1, 0.5], [0, 1, 0.5], value))
     .domain([startValue, endValue]);
@@ -156,7 +155,7 @@ function createColorScale(chart, draw) {
     .range([startValue, endValue]);
 
   if (draw) {
-    const startPoint = chart.chartArea.right + 10;
+    const startPoint = chart.chartArea.right + 25;
 
     const points = range(startValue, endValue, intervalValue);
 
@@ -228,11 +227,11 @@ function drawLegendAxis(ctx, startPointLeft, startValue, endValue) {
     ctx.lineTo(startPointLeft + 6, posY);
     ctx.stroke();
 
-    ctx.font = `10px ${Chart.defaults.global.defaultFontFamily}`;
+    ctx.font = `${Chart.defaults.global.defaultFontSize - 2}px ${Chart.defaults.global.defaultFontFamily}`;
     ctx.fillText(`${'10 '}`, startPointLeft + 9, posY);
 
-    ctx.font = `9px ${Chart.defaults.global.defaultFontFamily}`;
-    ctx.fillText(`${i}`, startPointLeft + 20, posY - 7);
+    ctx.font = `${Chart.defaults.global.defaultFontSize - 3}px ${Chart.defaults.global.defaultFontFamily}`;
+    ctx.fillText(`${i}`, startPointLeft + 22, posY - 7);
   }
 }
 
@@ -337,7 +336,7 @@ const stanfordDiagramPlugin = {
     ns.colorScale = undefined;
 
     // add space for scale
-    chartInstance.options.layout.padding.right += 65;
+    chartInstance.options.layout.padding.right += 78;
   },
   afterRender(chartInstance) {
     const ns = chartInstance.stanfordDiagramPlugin;
