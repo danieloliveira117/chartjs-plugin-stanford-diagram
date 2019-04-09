@@ -1,4 +1,4 @@
-import { range, scaleSequential, scaleLog, interpolateHSL } from './stanford-utils.js';
+import {range, scaleSequential, sequentialLog, interpolateHSL} from './stanford-utils.js';
 
 /**
  * Get the stanfordPlugin options
@@ -7,7 +7,7 @@ import { range, scaleSequential, scaleLog, interpolateHSL } from './stanford-uti
  * @returns {*|options.stanfordDiagram|{regions}|{}}
  */
 export function getStanfordConfig(chartOptions) {
-  const { plugins } = chartOptions;
+  const {plugins} = chartOptions;
   const pluginStanfordChart = plugins && plugins.stanfordDiagram ? plugins.stanfordDiagram : null;
 
   return pluginStanfordChart || chartOptions.stanfordDiagram || {};
@@ -20,7 +20,7 @@ export function getStanfordConfig(chartOptions) {
  * @param regions
  */
 function drawRegions(chart, regions) {
-  const { ctx } = chart;
+  const {ctx} = chart;
 
   if (!regions) return;
 
@@ -66,7 +66,7 @@ export function countEpochsInRegion(chart, points) {
  * @param points
  */
 function drawRegionText(chart, text, points) {
-  const { ctx } = chart;
+  const {ctx} = chart;
   const axisX = chart.scales['x-axis-1'];
   const axisY = chart.scales['y-axis-1'];
 
@@ -94,7 +94,7 @@ function getPixelValue(chart, points) {
   const axisX = chart.scales['x-axis-1'];
   const axisY = chart.scales['y-axis-1'];
 
-  return points.map(p => ({ x: axisX.getPixelForValue(p.x), y: axisY.getPixelForValue(p.y) }));
+  return points.map(p => ({x: axisX.getPixelForValue(p.x), y: axisY.getPixelForValue(p.y)}));
 }
 
 /**
@@ -108,9 +108,13 @@ function getPixelValue(chart, points) {
 export function pointInPolygon(point, polygon) {
   // ray-casting algorithm based on
   // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
-  let xi; let yi; let yj; let xj; let intersect;
-  const { x } = point;
-  const { y } = point;
+  let xi;
+  let yi;
+  let yj;
+  let xj;
+  let intersect;
+  const {x} = point;
+  const {y} = point;
   let inside = false;
 
   for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
@@ -134,11 +138,9 @@ export function pointInPolygon(point, polygon) {
  * Create color scale, if {draw} is true, it draws the scale
  *
  * @param chart
- * @param draw
- * @returns function to get the color of a respective value
  */
-function createColorScale(chart, draw) {
-  const { ctx } = chart;
+function drawColorScale(chart) {
+  const {ctx} = chart;
 
   const barWidth = 25;
   const barHeight = 5;
@@ -147,48 +149,40 @@ function createColorScale(chart, draw) {
   const intervalValue = barHeight;
   let endValue = chart.chartArea.bottom;
 
-  const colorScale = scaleSequential(value => interpolateHSL([0.7, 1, 0.5], [0, 1, 0.5], value))
+  const linearScale = scaleSequential(value => interpolateHSL([0.7, 1, 0.5], [0, 1, 0.5], value))
     .domain([startValue, endValue]);
 
-  const valueScale = scaleLog()
-    .domain([1, 10000])
-    .range([startValue, endValue]);
+  const startPoint = chart.chartArea.right + 25;
 
-  if (draw) {
-    const startPoint = chart.chartArea.right + 25;
+  const points = range(startValue, endValue, intervalValue);
 
-    const points = range(startValue, endValue, intervalValue);
+  const axisX = chart.scales['x-axis-1'];
+  const axisY = chart.scales['y-axis-1'];
 
-    const axisX = chart.scales['x-axis-1'];
-    const axisY = chart.scales['y-axis-1'];
+  ctx.save();
 
-    ctx.save();
+  points.forEach((p) => {
+    ctx.fillStyle = linearScale(endValue - p);
+    ctx.fillRect(startPoint, p, barWidth, barHeight);
+  });
 
-    points.forEach((p) => {
-      ctx.fillStyle = colorScale(endValue - p);
-      ctx.fillRect(startPoint, p, barWidth, barHeight);
-    });
+  // get rounded end value
+  endValue = points[points.length - 1] + intervalValue;
 
-    // get rounded end value
-    endValue = points[points.length - 1] + intervalValue;
+  drawLegendAxis(ctx, startPoint + barWidth, startValue, endValue);
 
-    drawLegendAxis(ctx, startPoint + barWidth, startValue, endValue);
+  // Draw XY line
+  const minMaxXY = Math.min(axisX.max, axisY.max);
 
-    // Draw XY line
-    const minMaxXY = Math.min(axisX.max, axisY.max);
+  ctx.lineWidth = 1;
+  ctx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
 
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+  ctx.beginPath();
+  ctx.moveTo(axisX.getPixelForValue(axisX.min), axisY.getPixelForValue(axisY.min));
+  ctx.lineTo(axisX.getPixelForValue(minMaxXY), axisY.getPixelForValue(minMaxXY));
+  ctx.stroke();
 
-    ctx.beginPath();
-    ctx.moveTo(axisX.getPixelForValue(axisX.min), axisY.getPixelForValue(axisY.min));
-    ctx.lineTo(axisX.getPixelForValue(minMaxXY), axisY.getPixelForValue(minMaxXY));
-    ctx.stroke();
-
-    ctx.restore();
-  }
-
-  return value => colorScale(valueScale(value));
+  ctx.restore();
 }
 
 // http://usefulangle.com/post/17/html5-canvas-drawing-1px-crisp-straight-lines
@@ -242,7 +236,7 @@ function drawLegendAxis(ctx, startPointLeft, startValue, endValue) {
  * @param fillColor
  * @param strokeColor
  */
-CanvasRenderingContext2D.prototype.polygon = function (pointsArray, fillColor, strokeColor) {
+CanvasRenderingContext2D.prototype.polygon = function(pointsArray, fillColor, strokeColor) {
   if (pointsArray.length <= 0) return;
 
   this.save();
@@ -317,7 +311,7 @@ Chart.defaults._set('stanford', {
       title: function() {
         return '';     // doesn't make sense for stanford since data are formatted as a point
       },
-      label: function (item, data) {
+      label: function(item, data) {
         return `S: ${data.datasets[0].data[item.index].epochs}   (${item.xLabel}, ${item.yLabel})`;
       }
     }
@@ -333,24 +327,17 @@ const stanfordDiagramPlugin = {
       options: getStanfordConfig(chartInstance.options.plugins),
     };
 
-    ns.colorScale = undefined;
+    ns.colorScale = sequentialLog(value => interpolateHSL([0.7, 1, 0.5], [0, 1, 0.5], value))
+      .domain([1, 10000]);
 
     // add space for scale
     chartInstance.options.layout.padding.right += 78;
   },
   afterRender(chartInstance) {
-    const ns = chartInstance.stanfordDiagramPlugin;
 
-    // Avoid infinite cycle
-    if (!ns.colorScale) {
-      ns.colorScale = createColorScale(chartInstance, false);
+    drawColorScale(chartInstance);
+    drawRegions(chartInstance, chartInstance.stanfordDiagramPlugin.options.regions);
 
-      chartInstance.update();
-    } else {
-      ns.colorScale = createColorScale(chartInstance, true);
-
-      drawRegions(chartInstance, ns.options.regions);
-    }
   },
   beforeDatasetsUpdate(chartInstance) {
     const ns = chartInstance.stanfordDiagramPlugin;
@@ -360,7 +347,7 @@ const stanfordDiagramPlugin = {
 
       for (let i = 0; i < chartInstance.data.datasets[0].data.length; i++) {
         chartInstance.data.datasets[0].pointBackgroundColor[i] =
-				ns.colorScale(chartInstance.data.datasets[0].data[i].epochs);
+          ns.colorScale(chartInstance.data.datasets[0].data[i].epochs);
       }
     }
   },

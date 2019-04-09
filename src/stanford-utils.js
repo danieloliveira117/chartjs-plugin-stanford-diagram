@@ -82,27 +82,15 @@ export function scaleSequential() {
   return initInterpolator.apply(scale, arguments);
 }
 
-// log$1
-export function scaleLog() {
-  const scale = loggish(transformerLog()).domain([1, 10]);
 
-  scale.copy = function () {
-    return copy(scale, scaleLog()).base(scale.base());
+export function sequentialLog() {
+  var scale = loggish(transformerLog()).domain([1, 10]);
+
+  scale.copy = function() {
+    return copy$1(scale, sequentialLog()).base(scale.base());
   };
 
-  initRange.apply(scale, arguments);
-
-  return scale;
-}
-
-const unit = [0, 1];
-const arrayPrototype = Array.prototype;
-
-const map = arrayPrototype.map;
-const slice = arrayPrototype.slice;
-
-function getPositiveNumber(x) {
-  return +x;
+  return initInterpolator.apply(scale, arguments);
 }
 
 function defaultFunction(x) {
@@ -131,31 +119,8 @@ function reflect(f) {
   };
 }
 
-function normalize(a, b) {
-  return (b -= (a = +a)) ?
-    function (x) {
-      return (x - a) / b;
-    } :
-    defaultFunction(isNaN(b) ? NaN : 0.5);
-}
-
 function pow10(x) {
   return isFinite(x) ? +('1e' + x) : x < 0 ? 0 : x;
-}
-
-function initRange(domain, range) {
-  switch (arguments.length) {
-  case 0:
-    break;
-  case 1:
-    this.range(domain);
-    break;
-  default:
-    this.range(range).domain(domain);
-    break;
-  }
-
-  return this;
 }
 
 function powp(base) {
@@ -169,10 +134,10 @@ function powp(base) {
 function logp(base) {
   return base === Math.E ? Math.log :
     base === 10 && Math.log10 ||
-        base === 2 && Math.log2 ||
-        (base = Math.log(base), function (x) {
-        	return Math.log(x) / base;
-        });
+    base === 2 && Math.log2 ||
+    (base = Math.log(base), function (x) {
+      return Math.log(x) / base;
+    });
 }
 
 function object(a, b) {
@@ -205,14 +170,14 @@ function interpolateNumber(a, b) {
 
 function initInterpolator(domain, interpolator) {
   switch (arguments.length) {
-  case 0:
-    break;
-  case 1:
-    this.interpolator(domain);
-    break;
-  default:
-    this.interpolator(interpolator).domain(domain);
-    break;
+    case 0:
+      break;
+    case 1:
+      this.interpolator(domain);
+      break;
+    default:
+      this.interpolator(interpolator).domain(domain);
+      break;
   }
 
   return this;
@@ -255,76 +220,44 @@ function transformerLinear() {
   };
 }
 
-function transformerLog() {
-  let domain = unit,
-    range = unit,
-    interpolate$$1 = interpolateValue,
-    transform,
-    untransform,
-    unknown,
-    clamp = defaultFunction,
-    piecewise$$1,
-    output,
-    input;
+function identity(x) {
+  return x;
+}
 
-  function rescale() {
-    piecewise$$1 = Math.min(domain.length, range.length) > 2 ? polymap : bimap;
-    output = input = null;
-    return scale;
-  }
+function transformerLog() {
+  var x0 = 0,
+    x1 = 1,
+    t0,
+    t1,
+    k10,
+    transform,
+    interpolator = identity,
+    clamp = false,
+    unknown;
 
   function scale(x) {
-    return isNaN(x = +x) ? unknown : (output || (output = piecewise$$1(domain.map(transform), range, interpolate$$1)))(transform(clamp(x)));
+    return isNaN(x = +x) ? unknown : interpolator(k10 === 0 ? 0.5 : (x = (transform(x) - t0) * k10, clamp ? Math.max(0, Math.min(1, x)) : x));
   }
 
-  scale.domain = function (_) {
-    return arguments.length ? (domain = map.call(_, getPositiveNumber), clamp === defaultFunction || (clamp = clamper(domain)), rescale()) : domain.slice();
+  scale.domain = function(_) {
+    return arguments.length ? ([x0, x1] = _, t0 = transform(x0 = +x0), t1 = transform(x1 = +x1), k10 = t0 === t1 ? 0 : 1 / (t1 - t0), scale) : [x0, x1];
   };
 
-  scale.range = function (_) {
-    return arguments.length ? (range = slice.call(_), rescale()) : range.slice();
+  scale.clamp = function(_) {
+    return arguments.length ? (clamp = !!_, scale) : clamp;
   };
 
-
-  scale.interpolate = function (_) {
-    return arguments.length ? (interpolate$$1 = _, rescale()) : interpolate$$1;
+  scale.interpolator = function(_) {
+    return arguments.length ? (interpolator = _, scale) : interpolator;
   };
 
-  return function (t, u) {
-    transform = t, untransform = u;
-    return rescale();
+  scale.unknown = function(_) {
+    return arguments.length ? (unknown = _, scale) : unknown;
   };
-}
 
-function bimap(domain, range, interpolate$$1) {
-  var d0 = domain[0], d1 = domain[1], r0 = range[0], r1 = range[1];
-  if (d1 < d0) d0 = normalize(d1, d0), r0 = interpolate$$1(r1, r0);
-  else d0 = normalize(d0, d1), r0 = interpolate$$1(r0, r1);
-  return function (x) {
-    return r0(d0(x));
-  };
-}
-
-function polymap(domain, range, interpolate$$1) {
-  var j = Math.min(domain.length, range.length) - 1,
-    d = new Array(j),
-    r = new Array(j),
-    i = -1;
-
-  // Reverse descending domains.
-  if (domain[j] < domain[0]) {
-    domain = domain.slice().reverse();
-    range = range.slice().reverse();
-  }
-
-  while (++i < j) {
-    d[i] = normalize(domain[i], domain[i + 1]);
-    r[i] = interpolate$$1(range[i], range[i + 1]);
-  }
-
-  return function (x) {
-    var i = bisectRight(domain, x, 1, j) - 1;
-    return r[i](d[i](x));
+  return function(t) {
+    transform = t, t0 = t(x0), t1 = t(x1), k10 = t0 === t1 ? 0 : 1 / (t1 - t0);
+    return scale;
   };
 }
 
