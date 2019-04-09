@@ -53,7 +53,7 @@ export function countEpochsInRegion(chart, points) {
   }, 0);
 
   return {
-    value: count,
+    count: count,
     percentage: count !== 0 ? (count / total * 100).toFixed(1) : 0
   };
 }
@@ -76,7 +76,7 @@ function drawRegionText(chart, text, points) {
   const content = text.format ? text.format(count, percentage) : `${count} (${percentage})`;
 
   ctx.save();
-  ctx.font = text.font ? text.font : `${Chart.defaults.global.defaultFontSize}px ${Chart.defaults.global.defaultFontFamily}`;
+  ctx.font = text.font ? text.font : `${chart.options.defaultFontSize}px ${Chart.defaults.global.defaultFontFamily}`;
   ctx.fillStyle = text.color ? text.color : Chart.defaults.global.defaultFontColor;
   ctx.textBaseline = 'middle';
   ctx.fillText(content, axisX.getPixelForValue(text.x), axisY.getPixelForValue(text.y));
@@ -169,7 +169,7 @@ function drawColorScale(chart) {
   // get rounded end value
   endValue = points[points.length - 1] + intervalValue;
 
-  drawLegendAxis(ctx, startPoint + barWidth, startValue, endValue);
+  drawLegendAxis(chart, ctx, startPoint + barWidth, startValue, endValue);
 
   // Draw XY line
   const minMaxXY = Math.min(axisX.max, axisY.max);
@@ -190,12 +190,13 @@ function drawColorScale(chart) {
 /**
  * Draw the color scale legend axis
  *
+ * @param chart
  * @param ctx
  * @param startPointLeft
  * @param startValue
  * @param endValue
  */
-function drawLegendAxis(ctx, startPointLeft, startValue, endValue) {
+function drawLegendAxis(chart, ctx, startPointLeft, startValue, endValue) {
   ctx.lineWidth = 1;
   ctx.strokeStyle = '#000000';
   ctx.fillStyle = '#000000';
@@ -221,11 +222,11 @@ function drawLegendAxis(ctx, startPointLeft, startValue, endValue) {
     ctx.lineTo(startPointLeft + 6, posY);
     ctx.stroke();
 
-    ctx.font = `${Chart.defaults.global.defaultFontSize - 2}px ${Chart.defaults.global.defaultFontFamily}`;
+    ctx.font = `${chart.options.defaultFontSize - 1}px ${Chart.defaults.global.defaultFontFamily}`;
     ctx.fillText(`${'10 '}`, startPointLeft + 9, posY);
 
-    ctx.font = `${Chart.defaults.global.defaultFontSize - 3}px ${Chart.defaults.global.defaultFontFamily}`;
-    ctx.fillText(`${i}`, startPointLeft + 22, posY - 7);
+    ctx.font = `${chart.options.defaultFontSize - 2}px ${Chart.defaults.global.defaultFontFamily}`;
+    ctx.fillText(`${i}`, startPointLeft + 9 + chart.options.defaultFontSize, posY - 7);
   }
 }
 
@@ -268,14 +269,21 @@ CanvasRenderingContext2D.prototype.polygon = function(pointsArray, fillColor, st
 /**
  * Stanford Diagram -- chart type
  */
-Chart.controllers.stanford = Chart.controllers.line;
+Chart.controllers.stanford = Chart.controllers.line.extend({
+  update: function() {
+    // "Responsive" point radius
+    this.chart.options.elements.point.radius = Math.round(this.chart.height / 200);
+
+    Chart.controllers.line.prototype.update.apply(this, arguments);
+  }
+});
 
 Chart.defaults._set('stanford', {
   animation: false,
   aspectRatio: 1.12,
   elements: {
     point: {
-      radius: 4,
+      radius: 2.5,
       pointStyle: 'rect'
     }
   },
@@ -322,35 +330,38 @@ Chart.defaults._set('stanford', {
  * Stanford Diagram Plugin
  */
 const stanfordDiagramPlugin = {
-  beforeInit(chartInstance) {
-    const ns = chartInstance.stanfordDiagramPlugin = {
-      options: getStanfordConfig(chartInstance.options.plugins),
+  beforeInit(c) {
+    const ns = c.stanfordDiagramPlugin = {
+      options: getStanfordConfig(c.options.plugins),
     };
 
     ns.colorScale = sequentialLog(value => interpolateHSL([0.7, 1, 0.5], [0, 1, 0.5], value))
       .domain([1, 10000]);
 
     // add space for scale
-    chartInstance.options.layout.padding.right += 78;
+    c.options.layout.padding.right += 78;
   },
-  afterRender(chartInstance) {
-
-    drawColorScale(chartInstance);
-    drawRegions(chartInstance, chartInstance.stanfordDiagramPlugin.options.regions);
-
-  },
-  beforeDatasetsUpdate(chartInstance) {
-    const ns = chartInstance.stanfordDiagramPlugin;
+  beforeDatasetsUpdate(c) {
+    const ns = c.stanfordDiagramPlugin;
 
     if (ns.colorScale) {
-      chartInstance.data.datasets[0].pointBackgroundColor = [];
+      c.data.datasets[0].pointBackgroundColor = [];
 
-      for (let i = 0; i < chartInstance.data.datasets[0].data.length; i++) {
-        chartInstance.data.datasets[0].pointBackgroundColor[i] =
-          ns.colorScale(chartInstance.data.datasets[0].data[i].epochs);
+      for (let i = 0; i < c.data.datasets[0].data.length; i++) {
+        c.data.datasets[0].pointBackgroundColor[i] =
+          ns.colorScale(c.data.datasets[0].data[i].epochs);
       }
     }
   },
+  beforeUpdate(c) {
+    // "Responsive" font-size
+    c.chart.options.defaultFontSize = Math.round(c.chart.height / 50);
+  },
+  afterRender(c) {
+
+    drawColorScale(c);
+    drawRegions(c, c.stanfordDiagramPlugin.options.regions);
+  }
 };
 
 export default stanfordDiagramPlugin;

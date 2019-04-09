@@ -58,7 +58,7 @@ describe("countEpochsInRegion", () => {
     const result = countEpochsInRegion(chart, region);
 
     expect(result.percentage).toBe(0);
-    expect(result.value).toBe(0);
+    expect(result.count).toBe(0);
   });
 
   it("should return 100% if the region has all the epochs", () => {
@@ -72,6 +72,6 @@ describe("countEpochsInRegion", () => {
     const result = countEpochsInRegion(chart, region);
 
     expect(Number(result.percentage)).toBe(100);
-    expect(result.value).toBe(65);
+    expect(result.count).toBe(65);
   });
 });

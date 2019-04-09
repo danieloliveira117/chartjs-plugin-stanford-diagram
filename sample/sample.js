@@ -47,7 +47,7 @@ new Chart(ctx, {
             ],
             strokeColor: 'rgba(0, 0, 0, 0.5)',
             text: {
-              x: 15,
+              x: 10,
               y: 35,
               color: 'black',
               format: function (value, percentage) {
