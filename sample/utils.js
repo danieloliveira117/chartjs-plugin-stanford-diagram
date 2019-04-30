@@ -1,12 +1,3 @@
-export function compareEpochs(a, b) {
-  if (a.epochs < b.epochs)
-    return -1;
-  if (a.epochs > b.epochs)
-    return 1;
-
-  return 0;
-}
-
 export function logDataValues(data) {
   const maxEpochs = Math.max(...data.map(o => o.epochs), 0);
   const maxXPE = Math.max(...data.map(o => o.HPE), 0);

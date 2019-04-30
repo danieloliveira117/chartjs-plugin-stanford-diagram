@@ -1,6 +1,6 @@
 import originalData from './data.js';
-import { compareEpochs, logDataValues } from './utils.js';
-import stanfordDiagramPlugin from '../dist/chartjs-plugin-stanford-diagram.js';
+import { logDataValues } from './utils.js';
+import StanfordDiagram from '../dist/chartjs-plugin-stanford-diagram.js';
 
 logDataValues(originalData);
 
@@ -127,5 +127,5 @@ new Chart(ctx, {
       }
     }
   },
-  plugins: [stanfordDiagramPlugin]
+  plugins: [StanfordDiagram]
 });

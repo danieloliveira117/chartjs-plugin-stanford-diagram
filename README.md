@@ -64,7 +64,7 @@ let epochs = data.datasets[0].data[item.index].epochs;
 ## Example
 
 ```js
-import stanfordDiagramPlugin from "./chartjs-plugin-stanford-diagram.min.js";
+import StanfordDiagram from 'chartjs-plugin-stanford-diagram';
 
 const ctx = document.getElementById('myChart')
   .getContext('2d');
@@ -121,7 +121,7 @@ new Chart(ctx, {
       }
     }
   },
-  plugins: [stanfordDiagramPlugin]
+  plugins: [StanfordDiagram]
 });
 ```
 
