@@ -1,4 +1,4 @@
-import {pointInPolygon, countEpochsInRegion} from "../src/stanford-diagram.js";
+import {pointInPolygon, countEpochsInRegion} from "../src/stanford.js";
 
 describe('pointInPolygon', () => {
   const polygon = [

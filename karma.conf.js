@@ -13,7 +13,7 @@ module.exports = function(config) {
     files: [
       'node_modules/chart.js/dist/Chart.bundle.js',
       { pattern: './src/**/*.js', type: 'module' },
-      { pattern: './test/*.spec.js', type: 'module' }
+      { pattern: './test/**/*.spec.js', type: 'module' }
     ],
 
     // list of files / patterns to exclude

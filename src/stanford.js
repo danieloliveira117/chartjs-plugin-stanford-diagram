@@ -1,4 +1,5 @@
 import {range, scaleSequential, sequentialLog, interpolateHSL} from './stanford-utils.js';
+import {customTooltipStyle} from './stanford-tooltip-style.js';
 
 /**
  * Get the stanfordPlugin options
@@ -315,12 +316,26 @@ Chart.defaults._set('stanford', {
   },
   showLines: false,
   tooltips: {
+    // Disable the on-canvas tooltip
+    enabled: false,
+    custom: customTooltipStyle,
     callbacks: {
-      title: function() {
-        return '';     // doesn't make sense for stanford since data are formatted as a point
+      title: function(item) {
+        return [
+          {
+            label: this._chart.scales['x-axis-1'].options.scaleLabel.labelString,
+            value: item[0].xLabel
+          }, {
+            label: this._chart.scales['x-axis-1'].options.scaleLabel.labelString,
+            value: item[0].yLabel
+          }
+        ];
       },
       label: function(item, data) {
-        return `S: ${data.datasets[0].data[item.index].epochs}   (${item.xLabel}, ${item.yLabel})`;
+        return {
+          label: 'Epochs',
+          value: data.datasets[0].data[item.index].epochs
+        };
       }
     }
   }
