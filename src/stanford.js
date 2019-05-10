@@ -326,7 +326,7 @@ Chart.defaults._set('stanford', {
             label: this._chart.scales['x-axis-1'].options.scaleLabel.labelString,
             value: item[0].xLabel
           }, {
-            label: this._chart.scales['x-axis-1'].options.scaleLabel.labelString,
+            label: this._chart.scales['y-axis-1'].options.scaleLabel.labelString,
             value: item[0].yLabel
           }
         ];
