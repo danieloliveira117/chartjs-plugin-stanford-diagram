@@ -98,6 +98,8 @@ new Chart(ctx, {
       }]
     },
     plugins: {
+      epochsLabel: 'Samples', // Change the name of 'epochs' on the tooltip
+      legendLabel: 'Number of samples (epochs) per point', // Change the color scale label text
       stanfordDiagram: {
         regions: [
           {

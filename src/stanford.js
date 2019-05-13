@@ -184,6 +184,10 @@ function drawColorScale(chart) {
   ctx.stroke();
 
   ctx.restore();
+
+  const legendPosition = startPoint + barWidth + 9 + chart.options.defaultFontSize + 22;
+
+  drawLegendLabel(chart, ctx, legendPosition, startValue, endValue);
 }
 
 // http://usefulangle.com/post/17/html5-canvas-drawing-1px-crisp-straight-lines
@@ -229,6 +233,34 @@ function drawLegendAxis(chart, ctx, startPointLeft, startValue, endValue) {
     ctx.font = `${chart.options.defaultFontSize - 2}px ${Chart.defaults.global.defaultFontFamily}`;
     ctx.fillText(`${i}`, startPointLeft + 9 + chart.options.defaultFontSize, posY - 7);
   }
+}
+
+/**
+ * Draw the color scale legend label
+ *
+ * @param chart
+ * @param ctx
+ * @param startPointLeft
+ * @param startValue
+ * @param endValue
+ */
+function drawLegendLabel(chart, ctx, startPointLeft, startValue, endValue) {
+  const text = chart.options.plugins.stanfordDiagram.legendLabel || 'Number of samples (epochs) per point';
+
+  // http://www.java2s.com/Tutorials/HTML_CSS/HTML5_Canvas_Reference/rotate.htm
+  ctx.save();
+
+  ctx.font = `${chart.options.defaultFontSize}px ${Chart.defaults.global.defaultFontFamily}`;
+  ctx.strokeStyle = '#000000';
+  ctx.fillStyle = '#000000';
+
+  const metrics = ctx.measureText(text);
+
+  ctx.translate(startPointLeft, (endValue - startValue) / 2 + metrics.width / 2);
+  ctx.rotate(-Math.PI / 2);
+
+  ctx.fillText(text, 0, 0);
+  ctx.restore();
 }
 
 /**
@@ -333,7 +365,7 @@ Chart.defaults._set('stanford', {
       },
       label: function(item, data) {
         return {
-          label: 'Epochs',
+          label: this._chart.options.plugins.stanfordDiagram.epochsLabel || 'Epochs',
           value: data.datasets[0].data[item.index].epochs
         };
       }
@@ -354,7 +386,7 @@ const stanfordDiagramPlugin = {
       .domain([1, 10000]);
 
     // add space for scale
-    c.options.layout.padding.right += 78;
+    c.options.layout.padding.right += 95;
   },
   beforeDatasetsUpdate(c) {
     const ns = c.stanfordDiagramPlugin;
