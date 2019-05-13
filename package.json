@@ -1,7 +1,7 @@
 {
   "name": "chartjs-plugin-stanford-diagram",
   "author": "Daniel Oliveira <daniel.oliveira@present-technologies.com>",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "Stanford Diagram plugin for Chart.js",
   "main": "dist/chartjs-plugin-stanford-diagram.min.js",
   "license": "MIT",
