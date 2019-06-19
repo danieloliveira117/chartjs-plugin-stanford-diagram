@@ -5,7 +5,7 @@ import {customTooltipStyle} from './stanford-tooltip-style.js';
  * Get the stanfordPlugin options
  *
  * @param chartOptions
- * @returns {*|options.stanfordDiagram|{regions}|{}}
+ * @returns {*|options.stanfordDiagram|{}}
  */
 export function getStanfordConfig(chartOptions) {
   const {plugins} = chartOptions;
@@ -139,8 +139,9 @@ export function pointInPolygon(point, polygon) {
  * Create color scale, if {draw} is true, it draws the scale
  *
  * @param chart
+ * @param maxEpochs
  */
-function drawColorScale(chart) {
+function drawColorScale(chart, maxEpochs) {
   const {ctx} = chart;
 
   const barWidth = 25;
@@ -170,7 +171,7 @@ function drawColorScale(chart) {
   // get rounded end value
   endValue = points[points.length - 1] + intervalValue;
 
-  drawLegendAxis(chart, ctx, startPoint + barWidth, startValue, endValue);
+  drawLegendAxis(chart, ctx, maxEpochs, startPoint + barWidth, startValue, endValue);
 
   // Draw XY line
   const minMaxXY = Math.min(axisX.max, axisY.max);
@@ -197,11 +198,12 @@ function drawColorScale(chart) {
  *
  * @param chart
  * @param ctx
+ * @param maxEpochs
  * @param startPointLeft
  * @param startValue
  * @param endValue
  */
-function drawLegendAxis(chart, ctx, startPointLeft, startValue, endValue) {
+function drawLegendAxis(chart, ctx, maxEpochs, startPointLeft, startValue, endValue) {
   ctx.lineWidth = 1;
   ctx.strokeStyle = '#000000';
   ctx.fillStyle = '#000000';
@@ -216,10 +218,12 @@ function drawLegendAxis(chart, ctx, startPointLeft, startValue, endValue) {
   ctx.textAlign = 'start';
   ctx.textBaseline = 'middle';
 
+  const numberOfTicks = getNumberOfTicks(maxEpochs);
+
   // Ticks marks along the positive Y-axis
   // Positive Y-axis of graph is negative Y-axis of the canvas
-  for (let i = 0; i < 5; i++) {
-    const posY = endValue - ((endValue - startValue) / 4 * i);
+  for (let i = 0; i <= numberOfTicks; i++) {
+    const posY = endValue - ((endValue - startValue) / numberOfTicks * i);
 
     ctx.beginPath();
 
@@ -233,6 +237,17 @@ function drawLegendAxis(chart, ctx, startPointLeft, startValue, endValue) {
     ctx.font = `${chart.options.defaultFontSize - 2}px ${Chart.defaults.global.defaultFontFamily}`;
     ctx.fillText(`${i}`, startPointLeft + 9 + chart.options.defaultFontSize, posY - 7);
   }
+}
+
+/**
+ * Gets number of ticks from maxEpochs value
+ *
+ * @param maxEpochs
+ */
+function getNumberOfTicks(maxEpochs) {
+  const maxExp = maxEpochs.toExponential();
+
+  return +maxExp.split('e', 2)[1];
 }
 
 /**
@@ -382,8 +397,12 @@ const stanfordDiagramPlugin = {
       options: getStanfordConfig(c.options.plugins),
     };
 
+    if (!ns.options.maxEpochs) {
+      ns.options.maxEpochs = 10000;
+    }
+
     ns.colorScale = sequentialLog(value => interpolateHSL([0.7, 1, 0.5], [0, 1, 0.5], value))
-      .domain([1, 10000]);
+      .domain([1, ns.options.maxEpochs]);
 
     // add space for scale
     c.options.layout.padding.right += 95;
@@ -405,8 +424,7 @@ const stanfordDiagramPlugin = {
     c.chart.options.defaultFontSize = Math.max(Math.round(c.chart.height / 50), 8);
   },
   afterRender(c) {
-
-    drawColorScale(c);
+    drawColorScale(c, c.stanfordDiagramPlugin.options.maxEpochs);
     drawRegions(c, c.stanfordDiagramPlugin.options.regions);
   }
 };

@@ -40,6 +40,7 @@ new Chart(ctx, {
       stanfordDiagram: {
         epochsLabel: 'Samples',
         legendLabel: 'Number of samples (epochs) per point',
+        maxEpochs: 10000,
         regions: [
           {
             points: [ // add points counter-clockwise

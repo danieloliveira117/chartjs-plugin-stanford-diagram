@@ -12,6 +12,12 @@ export function interpolateHSL(a, b, o) {
   const len = a.length;
   const hsl = Array(len);
 
+  if (o > 1) {
+    o = 1;
+  } else if (o < 0) {
+    o = 0;
+  }
+
   for (let i = 0; i < len; i++) {
     const a1 = a[i];
     hsl[i] = a1 + (b[i] - a1) * o;
@@ -32,7 +38,9 @@ export function interpolateHSL(a, b, o) {
  * @return  {String}          The RGB representation
  */
 function hslToRgb(h, s, l) {
-  let r; let g; let
+  let r;
+  let g;
+  let
     b;
 
   if (s === 0) { // achromatic
@@ -114,7 +122,7 @@ function transformExpn(x) {
 }
 
 function reflect(f) {
-  return function (x) {
+  return function(x) {
     return -f(-x);
   };
 }
@@ -126,7 +134,7 @@ function pow10(x) {
 function powp(base) {
   return base === 10 ? pow10 :
     base === Math.E ? Math.exp :
-      function (x) {
+      function(x) {
         return Math.pow(base, x);
       };
 }
@@ -135,7 +143,7 @@ function logp(base) {
   return base === Math.E ? Math.log :
     base === 10 && Math.log10 ||
     base === 2 && Math.log2 ||
-    (base = Math.log(base), function (x) {
+    (base = Math.log(base), function(x) {
       return Math.log(x) / base;
     });
 }
@@ -156,14 +164,14 @@ function object(a, b) {
     }
   }
 
-  return function (t) {
+  return function(t) {
     for (k in i) c[k] = i[k](t);
     return c;
   };
 }
 
 function interpolateNumber(a, b) {
-  return a = +a, b -= a, function (t) {
+  return a = +a, b -= a, function(t) {
     return a + b * t;
   };
 }
@@ -206,15 +214,15 @@ function transformerLinear() {
     return isNaN(x = +x) ? unknown : interpolator(k10 === 0 ? 0.5 : (x = (transform(x) - t0) * k10, clamp ? Math.max(0, Math.min(1, x)) : x));
   }
 
-  scale.domain = function (_) {
+  scale.domain = function(_) {
     return arguments.length ? (t0 = transform(x0 = +_[0]), t1 = transform(x1 = +_[1]), k10 = t0 === t1 ? 0 : 1 / (t1 - t0), scale) : [x0, x1];
   };
 
-  scale.interpolator = function (_) {
+  scale.interpolator = function(_) {
     return arguments.length ? (interpolator = _, scale) : interpolator;
   };
 
-  return function (t) {
+  return function(t) {
     transform = t, t0 = t(x0), t1 = t(x1), k10 = t0 === t1 ? 0 : 1 / (t1 - t0);
     return scale;
   };
@@ -317,15 +325,15 @@ function loggish(transform) {
     return scale;
   }
 
-  scale.base = function (_) {
+  scale.base = function(_) {
     return arguments.length ? (base = +_, rescale()) : base;
   };
 
-  scale.domain = function (_) {
+  scale.domain = function(_) {
     return arguments.length ? (domain(_), rescale()) : domain();
   };
 
-  scale.ticks = function (count) {
+  scale.ticks = function(count) {
     var d = domain(),
       u = d[0],
       v = d[d.length - 1],
@@ -365,25 +373,25 @@ function loggish(transform) {
     return r ? z.reverse() : z;
   };
 
-  scale.tickFormat = function (count, specifier) {
+  scale.tickFormat = function(count, specifier) {
     if (specifier == null) specifier = base === 10 ? '.0e' : ',';
     if (typeof specifier !== 'function') specifier = exports.format(specifier);
     if (count === Infinity) return specifier;
     if (count == null) count = 10;
     var k = Math.max(1, base * count / scale.ticks().length); // TODO fast estimate?
-    return function (d) {
+    return function(d) {
       var i = d / pows(Math.round(logs(d)));
       if (i * base < base - 0.5) i *= base;
       return i <= k ? specifier(d) : '';
     };
   };
 
-  scale.nice = function () {
+  scale.nice = function() {
     return domain(nice(domain(), {
-      floor: function (x) {
+      floor: function(x) {
         return pows(Math.floor(logs(x)));
       },
-      ceil: function (x) {
+      ceil: function(x) {
         return pows(Math.ceil(logs(x)));
       }
     }));

@@ -61,6 +61,27 @@ You can get the epoch value by using the item index:
 let epochs = data.datasets[0].data[item.index].epochs;
 ```
 
+#### Epochs tooltip name 
+```js
+stanfordDiagram: {
+  epochsLabel: 'Samples' // Change the name of 'epochs' on the tooltip
+}
+```
+
+#### Scale Legend
+```js
+stanfordDiagram: {
+  legendLabel: 'Number of samples (epochs) per point', // Change the color scale label text
+}
+```
+
+#### Max scale value
+```js
+stanfordDiagram: {
+  maxEpochs: 10000 // Change the max value on the scale
+}
+```
+
 ## Example
 
 ```js
@@ -98,9 +119,10 @@ new Chart(ctx, {
       }]
     },
     plugins: {
-      epochsLabel: 'Samples', // Change the name of 'epochs' on the tooltip
-      legendLabel: 'Number of samples (epochs) per point', // Change the color scale label text
       stanfordDiagram: {
+        epochsLabel: 'Samples', // Change the name of 'epochs' on the tooltip
+        legendLabel: 'Number of samples (epochs) per point', // Change the color scale label text
+        maxEpochs: 10000, // Change the max value on the scale
         regions: [
           {
             points: [ // Add points counter-clockwise
