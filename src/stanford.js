@@ -405,7 +405,7 @@ const stanfordDiagramPlugin = {
       .domain([1, ns.options.maxEpochs]);
 
     // add space for scale
-    c.options.layout.padding.right += 95;
+    c.options.layout.padding.right += 100;
   },
   beforeDatasetsUpdate(c) {
     const ns = c.stanfordDiagramPlugin;

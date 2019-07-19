@@ -1,9 +1,10 @@
 {
   "name": "chartjs-plugin-stanford-diagram",
   "author": "Daniel Oliveira <daniel.oliveira@present-technologies.com>",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Stanford Diagram plugin for Chart.js",
-  "main": "dist/chartjs-plugin-stanford-diagram.min.js",
+  "main": "dist/chartjs-plugin-stanford-diagram.js",
+  "module": "dist/chartjs-plugin-stanford-diagram.module.js",
   "license": "MIT",
   "keywords": [
     "chart",
@@ -30,14 +31,19 @@
     "chart.js": "^2.8.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
     "eslint": "^5.16.0",
     "jasmine-core": "^3.4.0",
     "karma": "^4.1.0",
     "karma-chrome-launcher": "^2.2.0",
     "karma-jasmine": "^2.0.1",
-    "rollup": "^1.10.0",
+    "rollup": "^1.17.0",
+    "rollup-plugin-babel": "^4.3.3",
+    "rollup-plugin-commonjs": "^10.0.1",
     "rollup-plugin-eslint": "^5.1.0",
-    "rollup-plugin-livereload": "^1.0.0",
+    "rollup-plugin-livereload": "^1.0.1",
+    "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-serve": "^1.0.1",
     "rollup-plugin-terser": "^4.0.4"
   }

@@ -1,6 +1,6 @@
 import originalData from './data.js';
 import { logDataValues } from './utils.js';
-import StanfordDiagram from '../dist/chartjs-plugin-stanford-diagram.js';
+import StanfordDiagram from '../dist/chartjs-plugin-stanford-diagram.module.js';
 
 logDataValues(originalData);
 
