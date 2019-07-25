@@ -391,7 +391,7 @@ Chart.defaults._set('stanford', {
 /**
  * Stanford Diagram Plugin
  */
-const stanfordDiagramPlugin = {
+export const stanfordDiagramPlugin = {
   beforeInit(c) {
     const ns = c.stanfordDiagramPlugin = {
       options: getStanfordConfig(c.options.plugins),
@@ -428,5 +428,3 @@ const stanfordDiagramPlugin = {
     drawRegions(c, c.stanfordDiagramPlugin.options.regions);
   }
 };
-
-export default stanfordDiagramPlugin;

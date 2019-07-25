@@ -40,7 +40,14 @@ if (watch) {
         sourcemap: false
       },
       plugins: [
-        eslint()
+        eslint(),
+        babel({
+          babelrc: false,
+          exclude: 'node_modules/**',
+          presets: [
+            ['@babel/preset-env', { modules: false }]
+          ]
+        })
       ]
     },
     {
@@ -52,6 +59,13 @@ if (watch) {
       },
       plugins: [
         eslint(),
+        babel({
+          babelrc: false,
+          exclude: 'node_modules/**',
+          presets: [
+            ['@babel/preset-env', { modules: false }]
+          ]
+        }),
         terser()
       ]
     },
@@ -59,15 +73,13 @@ if (watch) {
       input: 'src/stanford.js',
       output: {
         file: 'dist/chartjs-plugin-stanford-diagram.js',
-        format: 'umd',
+        format: 'cjs',
         exports: 'named',
-        name: 'StanfordDiagramPlugin',
+        name: 'stanfordDiagramPlugin',
         esModule: false
       },
       plugins: [
         eslint(),
-        // resolve(),
-        // commonjs(),
         babel({
           babelrc: false,
           exclude: 'node_modules/**',
@@ -83,14 +95,12 @@ if (watch) {
         file: 'dist/chartjs-plugin-stanford-diagram.min.js',
         format: 'umd',
         exports: 'named',
-        name: 'StanfordDiagramPlugin',
+        name: 'stanfordDiagramPlugin',
         esModule: false,
         sourcemap: true
       },
       plugins: [
         eslint(),
-        // resolve(),
-        // commonjs(),
         babel({
           babelrc: false,
           exclude: 'node_modules/**',

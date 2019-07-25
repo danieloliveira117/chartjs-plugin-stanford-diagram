@@ -85,7 +85,7 @@ stanfordDiagram: {
 ## Example
 
 ```js
-import StanfordDiagram from 'chartjs-plugin-stanford-diagram';
+import { stanfordDiagramPlugin } from 'chartjs-plugin-stanford-diagram';
 
 const ctx = document.getElementById('myChart')
   .getContext('2d');
@@ -145,7 +145,7 @@ new Chart(ctx, {
       }
     }
   },
-  plugins: [StanfordDiagram]
+  plugins: [stanfordDiagramPlugin]
 });
 ```
 
