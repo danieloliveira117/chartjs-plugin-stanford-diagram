@@ -4,7 +4,8 @@
   "version": "1.3.0",
   "description": "Stanford Diagram plugin for Chart.js",
   "main": "dist/chartjs-plugin-stanford-diagram.js",
-  "module": "dist/chartjs-plugin-stanford-diagram.module.js",
+  "module": "dist/chartjs-plugin-stanford-diagram.js",
+  "es2015": "src/stanford.js",
   "license": "MIT",
   "keywords": [
     "chart",

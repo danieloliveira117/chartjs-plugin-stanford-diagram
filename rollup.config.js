@@ -13,7 +13,7 @@ if (watch) {
     {
       input: 'src/stanford.js',
       output: {
-        file: 'dist/chartjs-plugin-stanford-diagram.module.js',
+        file: 'dist/chartjs-plugin-stanford-diagram.esm.js',
         format: 'esm',
         sourcemap: false
       },
@@ -25,7 +25,7 @@ if (watch) {
           contentBase: ''
         }),
         livereload({
-          watch: 'dist/chartjs-plugin-stanford-diagram.module.js'
+          watch: 'dist/chartjs-plugin-stanford-diagram.esm.js'
         })
       ]
     }
@@ -35,7 +35,7 @@ if (watch) {
     {
       input: 'src/stanford.js',
       output: {
-        file: 'dist/chartjs-plugin-stanford-diagram.module.js',
+        file: 'dist/chartjs-plugin-stanford-diagram.esm.js',
         format: 'esm',
         sourcemap: false
       },
@@ -53,7 +53,7 @@ if (watch) {
     {
       input: 'src/stanford.js',
       output: {
-        file: 'dist/chartjs-plugin-stanford-diagram.module.min.js',
+        file: 'dist/chartjs-plugin-stanford-diagram.esm.min.js',
         format: 'esm',
         sourcemap: true
       },
@@ -73,7 +73,7 @@ if (watch) {
       input: 'src/stanford.js',
       output: {
         file: 'dist/chartjs-plugin-stanford-diagram.js',
-        format: 'cjs',
+        format: 'umd',
         exports: 'named',
         name: 'stanfordDiagramPlugin',
         esModule: false
