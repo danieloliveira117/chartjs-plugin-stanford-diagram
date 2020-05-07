@@ -26,6 +26,8 @@ A region can be a polygon outline, a filled polygon or both. **WARN:** You need 
 
 You can also add text associated to the polygon, as show in the object below.
 
+Each value can be a Number, or the string 'MAX'.
+
 **Region Object**
 
 ```js
@@ -71,7 +73,7 @@ stanfordDiagram: {
 #### Scale Legend
 ```js
 stanfordDiagram: {
-  legendLabel: 'Number of samples (epochs) per point', // Change the color scale label text
+  legendLabel: 'Number of samples (epochs) per point' // Change the color scale label text
 }
 ```
 

@@ -1,6 +1,6 @@
 import originalData from './data.js';
-import { logDataValues } from './utils.js';
-import { stanfordDiagramPlugin } from '../dist/chartjs-plugin-stanford-diagram.module.js';
+import {logDataValues} from './utils.js';
+import {stanfordDiagramPlugin} from '../dist/chartjs-plugin-stanford-diagram.esm.js';
 
 logDataValues(originalData);
 
@@ -23,8 +23,8 @@ new Chart(ctx, {
   },
   options: {
     scales: { // https://www.chartjs.org/docs/latest/axes/labelling.html#scale-title-configuration
-          xAxes: [{
-            scaleLabel: {
+      xAxes: [{
+        scaleLabel: {
           display: true,
           labelString: 'HPE (m)'
         }
@@ -76,8 +76,8 @@ new Chart(ctx, {
           }, {
             points: [
               {x: 40, y: 0},
-              {x: 60, y: 0},
-              {x: 60, y: 40},
+              {x: 'MAX', y: 0},
+              {x: 'MAX', y: 40},
               {x: 40, y: 40},
             ],
             fillColor: 'rgba(255, 0, 0, 0.2)',
@@ -95,8 +95,8 @@ new Chart(ctx, {
             points: [
               {x: 0, y: 40},
               {x: 40, y: 40},
-              {x: 60, y: 60},
-              {x: 0, y: 60},
+              {x: 'MAX', y: 'MAX'},
+              {x: 0, y: 'MAX'},
             ],
             fillColor: 'rgba(128, 128, 128, 0.2)',
             strokeColor: 'rgba(0, 0, 0, 0.5)',
@@ -112,8 +112,8 @@ new Chart(ctx, {
           {
             points: [
               {x: 40, y: 40},
-              {x: 60, y: 40},
-              {x: 60, y: 60}
+              {x: 'MAX', y: 40},
+              {x: 'MAX', y: 'MAX'}
             ],
             fillColor: 'rgba(255, 165, 0, 0.2)',
             strokeColor: 'rgba(0, 0, 0, 0.5)',

@@ -42,7 +42,8 @@ function drawRegions(chart, regions) {
  * @returns {{percentage: string, value: number}}
  */
 export function countEpochsInRegion(chart, points) {
-  const total = chart.data.datasets[0].data.reduce((accumulator, currentValue) => accumulator + Number(currentValue.epochs), 0);
+  const total = chart.data.datasets[0].data
+    .reduce((accumulator, currentValue) => accumulator + Number(currentValue.epochs), 0);
 
   // Count how many points are in Region
   const count = chart.data.datasets[0].data.reduce((accumulator, currentValue) => {
@@ -95,7 +96,10 @@ function getPixelValue(chart, points) {
   const axisX = chart.scales['x-axis-1'];
   const axisY = chart.scales['y-axis-1'];
 
-  return points.map(p => ({x: axisX.getPixelForValue(p.x), y: axisY.getPixelForValue(p.y)}));
+  return points.map(p => ({
+    x: p.x === 'MAX' ? chart.chartArea.right : axisX.getPixelForValue(p.x),
+    y: p.y === 'MAX' ? chart.chartArea.top : axisY.getPixelForValue(p.y)
+  }));
 }
 
 /**
