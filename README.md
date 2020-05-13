@@ -26,7 +26,10 @@ A region can be a polygon outline, a filled polygon or both. **WARN:** You need 
 
 You can also add text associated to the polygon, as show in the object below.
 
-Each value can be a Number, or the string 'MAX'.
+Each value can be a Number, or the strings:
+ - ```'MAX_X'``` - The max visible value in the X axis;
+ - ```'MAX_Y'``` - The max visible value in the Y axis;
+ - ```'MAX_XY'``` - The lowest between the max visible values of the X or the Y axis.
 
 **Region Object**
 

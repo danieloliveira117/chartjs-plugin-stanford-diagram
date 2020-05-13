@@ -97,9 +97,30 @@ function getPixelValue(chart, points) {
   const axisY = chart.scales['y-axis-1'];
 
   return points.map(p => ({
-    x: p.x === 'MAX' ? chart.chartArea.right : axisX.getPixelForValue(p.x),
-    y: p.y === 'MAX' ? chart.chartArea.top : axisY.getPixelForValue(p.y)
+    x: axisX.getPixelForValue(getPointToDraw(p.x, axisX, axisY)),
+    y: axisY.getPixelForValue(getPointToDraw(p.y, axisX, axisY))
   }));
+}
+
+/**
+ * Obtains the point to draw.
+ *
+ * @param point
+ * @param axisX
+ * @param axisY
+ * @returns {number} point to draw
+ */
+function getPointToDraw(point, axisX, axisY) {
+  switch (point) {
+  case 'MAX_XY':
+    return Math.min(axisX.max, axisY.max);
+  case 'MAX_X':
+    return axisX.max;
+  case 'MAX_Y':
+    return axisY.max;
+  default:
+    return point;
+  }
 }
 
 /**

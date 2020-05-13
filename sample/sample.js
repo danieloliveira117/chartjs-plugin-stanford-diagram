@@ -76,8 +76,8 @@ new Chart(ctx, {
           }, {
             points: [
               {x: 40, y: 0},
-              {x: 'MAX', y: 0},
-              {x: 'MAX', y: 40},
+              {x: 'MAX_X', y: 0},
+              {x: 'MAX_X', y: 40},
               {x: 40, y: 40},
             ],
             fillColor: 'rgba(255, 0, 0, 0.2)',
@@ -95,8 +95,9 @@ new Chart(ctx, {
             points: [
               {x: 0, y: 40},
               {x: 40, y: 40},
-              {x: 'MAX', y: 'MAX'},
-              {x: 0, y: 'MAX'},
+              {x: 'MAX_XY', y: 'MAX_XY'},
+              {x: 'MAX_X', y: 'MAX_Y'},
+              {x: 0, y: 'MAX_Y'},
             ],
             fillColor: 'rgba(128, 128, 128, 0.2)',
             strokeColor: 'rgba(0, 0, 0, 0.5)',
@@ -112,8 +113,9 @@ new Chart(ctx, {
           {
             points: [
               {x: 40, y: 40},
-              {x: 'MAX', y: 40},
-              {x: 'MAX', y: 'MAX'}
+              {x: 'MAX_X', y: 40},
+              {x: 'MAX_X', y: 'MAX_Y'},
+              {x: 'MAX_XY', y: 'MAX_XY'}
             ],
             fillColor: 'rgba(255, 165, 0, 0.2)',
             strokeColor: 'rgba(0, 0, 0, 0.5)',
