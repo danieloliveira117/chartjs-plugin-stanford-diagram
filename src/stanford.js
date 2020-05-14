@@ -1,4 +1,4 @@
-import {range, scaleSequential, sequentialLog, interpolateHSL} from './stanford-utils.js';
+import {interpolateHSL, range, scaleSequential, sequentialLog} from './stanford-utils.js';
 import {customTooltipStyle} from './stanford-tooltip-style.js';
 
 /**
@@ -17,10 +17,11 @@ export function getStanfordConfig(chartOptions) {
 /**
  * Draws the region polygon
  *
- * @param chart
- * @param regions
+ * @param chart - Chart.js instance
+ * @param regions - Array of regions
+ * @param countOnlyVisible - Count only the visible points
  */
-function drawRegions(chart, regions) {
+function drawRegions(chart, regions, countOnlyVisible) {
   const {ctx} = chart;
 
   if (!regions) return;
@@ -29,7 +30,7 @@ function drawRegions(chart, regions) {
     ctx.polygon(getPixelValue(chart, element.points), element.fillColor, element.strokeColor);
 
     if (element.text) {
-      drawRegionText(chart, element.text, element.points);
+      drawRegionText(chart, element.text, element.points, countOnlyVisible);
     }
   });
 }
@@ -39,15 +40,16 @@ function drawRegions(chart, regions) {
  *
  * @param chart - Chart.js instance
  * @param points - Array of points
+ * @param countOnlyVisible - Count only the visible points
  * @returns {{percentage: string, value: number}}
  */
-export function countEpochsInRegion(chart, points) {
+export function countEpochsInRegion(chart, points, countOnlyVisible) {
   const total = chart.data.datasets[0].data
     .reduce((accumulator, currentValue) => accumulator + Number(currentValue.epochs), 0);
 
   // Count how many points are in Region
   const count = chart.data.datasets[0].data.reduce((accumulator, currentValue) => {
-    if (pointInPolygon(currentValue, points)) {
+    if (pointInPolygon(chart, currentValue, points, countOnlyVisible)) {
       return accumulator + Number(currentValue.epochs);
     }
 
@@ -66,13 +68,14 @@ export function countEpochsInRegion(chart, points) {
  * @param chart
  * @param text
  * @param points
+ * @param countOnlyVisible
  */
-function drawRegionText(chart, text, points) {
+function drawRegionText(chart, text, points, countOnlyVisible) {
   const {ctx} = chart;
   const axisX = chart.scales['x-axis-1'];
   const axisY = chart.scales['y-axis-1'];
 
-  const {count, percentage} = countEpochsInRegion(chart, points);
+  const {count, percentage} = countEpochsInRegion(chart, points, countOnlyVisible);
 
   // Get text
   const content = text.format ? text.format(count, percentage) : `${count} (${percentage})`;
@@ -124,31 +127,99 @@ function getPointToDraw(point, axisX, axisY) {
 }
 
 /**
+ * Obtains the point to draw.
+ *
+ * @param point
+ * @param axisX
+ * @param axisY
+ * @param comparePoint
+ * @param axis 'x' or 'y'
+ *
+ * @returns {number} point to draw
+ */
+function getPointToDrawForPolygon(point, axisX, axisY, comparePoint, axis) {
+  switch (point) {
+  case 'MAX_XY':
+    if (axis === 'x' && comparePoint > axisX.max) {
+      return Math.ceil(comparePoint * axisY.max / axisX.max) + 1;
+    }
+
+    if (axis === 'y' && comparePoint > axisY.max) {
+      return Math.ceil(comparePoint * axisX.max / axisY.max) + 1;
+    }
+
+    return Math.min(axisX.max, axisY.max) + 1;
+  case 'MAX_X':
+    if (axis === 'x' && comparePoint > axisX.max) {
+      return comparePoint + 1;
+    }
+
+    return axisX.max + 1;
+  case 'MAX_Y':
+    if (axis === 'y' && comparePoint > axisY.max) {
+      return comparePoint + 1;
+    }
+
+    return axisY.max + 1;
+  default:
+    return point;
+  }
+}
+
+
+/**
  * Check if point is inside polygon
  * thanks to: http://bl.ocks.org/bycoffe/5575904
  *
+ * @param chart
  * @param point
  * @param polygon
+ * @param countOnlyVisible
+ *
  * @returns {boolean}
  */
-export function pointInPolygon(point, polygon) {
+export function pointInPolygon(chart, point, polygon, countOnlyVisible) {
   // ray-casting algorithm based on
   // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+  const axisX = chart.scales['x-axis-1'];
+  const axisY = chart.scales['y-axis-1'];
+
   let xi;
   let yi;
   let yj;
   let xj;
   let intersect;
-  const {x} = point;
-  const {y} = point;
   let inside = false;
+  const {x, y} = point;
 
   for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-    xi = polygon[i].x;
-    yi = polygon[i].y;
+    if (countOnlyVisible) {
+      xi = getPointToDraw(polygon[i].x, axisX, axisY);
+      yi = getPointToDraw(polygon[i].y, axisX, axisY);
+      xj = getPointToDraw(polygon[j].x, axisX, axisY);
+      yj = getPointToDraw(polygon[j].y, axisX, axisY);
 
-    xj = polygon[j].x;
-    yj = polygon[j].y;
+      if (typeof polygon[i].x !== 'number') {
+        xi += 1;
+      }
+
+      if (typeof polygon[i].y !== 'number') {
+        yi += 1;
+      }
+
+      if (typeof polygon[j].x !== 'number') {
+        xj += 1;
+      }
+
+      if (typeof polygon[j].y !== 'number') {
+        yj += 1;
+      }
+    } else {
+      xi = getPointToDrawForPolygon(polygon[i].x, axisX, axisY, x, 'x');
+      xj = getPointToDrawForPolygon(polygon[j].x, axisX, axisY, x, 'x');
+      yi = getPointToDrawForPolygon(polygon[i].y, axisX, axisY, y, 'y');
+      yj = getPointToDrawForPolygon(polygon[j].y, axisX, axisY, y, 'y');
+    }
 
     intersect = ((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
 
@@ -310,7 +381,7 @@ function drawLegendLabel(chart, ctx, startPointLeft, startValue, endValue) {
  * @param fillColor
  * @param strokeColor
  */
-CanvasRenderingContext2D.prototype.polygon = function(pointsArray, fillColor, strokeColor) {
+CanvasRenderingContext2D.prototype.polygon = function (pointsArray, fillColor, strokeColor) {
   if (pointsArray.length <= 0) return;
 
   this.save();
@@ -343,7 +414,7 @@ CanvasRenderingContext2D.prototype.polygon = function(pointsArray, fillColor, st
  * Stanford Diagram -- chart type
  */
 Chart.controllers.stanford = Chart.controllers.line.extend({
-  update: function() {
+  update: function () {
     // "Responsive" point radius
     this.chart.options.elements.point.radius = Math.max(Math.round(this.chart.height / 200), 1);
 
@@ -392,7 +463,7 @@ Chart.defaults._set('stanford', {
     enabled: false,
     custom: customTooltipStyle,
     callbacks: {
-      title: function(item) {
+      title: function (item) {
         return [
           {
             label: this._chart.scales['x-axis-1'].options.scaleLabel.labelString,
@@ -403,7 +474,7 @@ Chart.defaults._set('stanford', {
           }
         ];
       },
-      label: function(item, data) {
+      label: function (item, data) {
         return {
           label: this._chart.options.plugins.stanfordDiagram.epochsLabel || 'Epochs',
           value: data.datasets[0].data[item.index].epochs
@@ -450,6 +521,6 @@ export const stanfordDiagramPlugin = {
   },
   afterRender(c) {
     drawColorScale(c, c.stanfordDiagramPlugin.options.maxEpochs);
-    drawRegions(c, c.stanfordDiagramPlugin.options.regions);
+    drawRegions(c, c.stanfordDiagramPlugin.options.regions, !!c.stanfordDiagramPlugin.options.countOnlyVisible);
   }
 };

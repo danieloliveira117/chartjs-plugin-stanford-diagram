@@ -10,22 +10,22 @@ export default [
     'epochs': 1000
   },
   {
-    'HPE': 2.5,
-    'HPL': 27.5,
-    'epochs': 100
-  },
-  {
-    'HPE': 3,
-    'HPL': 26,
+    'HPE': 63,
+    'HPL': 65,
     'epochs': 1
   },
   {
-    'HPE': 3.5,
-    'HPL': 39,
+    'HPE': 65,
+    'HPL': 63,
     'epochs': 1
   },
   {
-    'HPE': 3.5,
+    'HPE': 35,
+    'HPL': 35,
+    'epochs': 5
+  },
+  {
+    'HPE': 63.5,
     'HPL': 39.5,
     'epochs': 1
   },

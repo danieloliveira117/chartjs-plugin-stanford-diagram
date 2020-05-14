@@ -27,12 +27,18 @@ new Chart(ctx, {
         scaleLabel: {
           display: true,
           labelString: 'HPE (m)'
+        },
+        ticks: {
+          max: 60 // Set max visible data
         }
       }],
       yAxes: [{
         scaleLabel: {
           display: true,
           labelString: 'HPL (m)'
+        },
+        ticks: {
+          max: 60 // Set max visible data
         }
       }]
     },
@@ -41,6 +47,7 @@ new Chart(ctx, {
         epochsLabel: 'Samples',
         legendLabel: 'Number of samples (epochs) per point',
         maxEpochs: 10000,
+        countOnlyVisible: false,
         regions: [
           {
             points: [ // add points counter-clockwise
