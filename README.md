@@ -87,6 +87,13 @@ stanfordDiagram: {
 }
 ```
 
+#### Count points outside visible area (in regions)
+```js
+stanfordDiagram: {
+  countOnlyVisible: false // If the points outside the visible area should be counted in regions
+}
+```
+
 ## Example
 
 ```js
@@ -128,6 +135,7 @@ new Chart(ctx, {
         epochsLabel: 'Samples', // Change the name of 'epochs' on the tooltip
         legendLabel: 'Number of samples (epochs) per point', // Change the color scale label text
         maxEpochs: 10000, // Change the max value on the scale
+        countOnlyVisible: true,
         regions: [
           {
             points: [ // Add points counter-clockwise
