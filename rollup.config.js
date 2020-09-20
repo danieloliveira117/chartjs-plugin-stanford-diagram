@@ -1,8 +1,8 @@
 import serve from 'rollup-plugin-serve';
 import livereload from 'rollup-plugin-livereload';
-import {terser} from 'rollup-plugin-terser';
-import {eslint} from 'rollup-plugin-eslint';
-import babel from 'rollup-plugin-babel';
+import { terser } from 'rollup-plugin-terser';
+import { eslint } from 'rollup-plugin-eslint';
+import babel from '@rollup/plugin-babel';
 
 const watch = process.env.ROLLUP_WATCH;
 
@@ -42,6 +42,7 @@ if (watch) {
       plugins: [
         eslint(),
         babel({
+          babelHelpers: 'bundled',
           babelrc: false,
           exclude: 'node_modules/**',
           presets: [
@@ -60,6 +61,7 @@ if (watch) {
       plugins: [
         eslint(),
         babel({
+          babelHelpers: 'bundled',
           babelrc: false,
           exclude: 'node_modules/**',
           presets: [
@@ -81,6 +83,7 @@ if (watch) {
       plugins: [
         eslint(),
         babel({
+          babelHelpers: 'bundled',
           babelrc: false,
           exclude: 'node_modules/**',
           presets: [
@@ -102,6 +105,7 @@ if (watch) {
       plugins: [
         eslint(),
         babel({
+          babelHelpers: 'bundled',
           babelrc: false,
           exclude: 'node_modules/**',
           presets: [
@@ -111,7 +115,7 @@ if (watch) {
         terser()
       ]
     }
-  ]
+  ];
 }
 
 export default builds;
