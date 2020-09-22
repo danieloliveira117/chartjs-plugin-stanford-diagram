@@ -48,6 +48,10 @@ new Chart(ctx, {
         legendLabel: 'Number of samples (epochs) per point',
         maxEpochs: 10000,
         countOnlyVisible: false,
+        percentage: {
+          decimalPlaces: 1,
+          roundingMethod: 'round'
+        },
         regions: [
           {
             points: [ // add points counter-clockwise

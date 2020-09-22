@@ -25,7 +25,10 @@ if (watch) {
           contentBase: ''
         }),
         livereload({
-          watch: 'dist/chartjs-plugin-stanford-diagram.esm.js'
+          watch: [
+            'dist/chartjs-plugin-stanford-diagram.esm.js',
+            'sample/**'
+          ]
         })
       ]
     }

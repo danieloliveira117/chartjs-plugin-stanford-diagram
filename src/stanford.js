@@ -1,5 +1,5 @@
-import {interpolateHSL, range, scaleSequential, sequentialLog} from './stanford-utils.js';
-import {customTooltipStyle} from './stanford-tooltip-style.js';
+import { interpolateHSL, range, scaleSequential, sequentialLog } from './stanford-utils.js';
+import { customTooltipStyle } from './stanford-tooltip-style.js';
 
 /**
  * Get the stanfordPlugin options
@@ -8,7 +8,7 @@ import {customTooltipStyle} from './stanford-tooltip-style.js';
  * @returns {*|options.stanfordDiagram|{}}
  */
 export function getStanfordConfig(chartOptions) {
-  const {plugins} = chartOptions;
+  const { plugins } = chartOptions;
   const pluginStanfordChart = plugins && plugins.stanfordDiagram ? plugins.stanfordDiagram : null;
 
   return pluginStanfordChart || chartOptions.stanfordDiagram || {};
@@ -22,7 +22,7 @@ export function getStanfordConfig(chartOptions) {
  * @param countOnlyVisible - Count only the visible points
  */
 function drawRegions(chart, regions, countOnlyVisible) {
-  const {ctx} = chart;
+  const { ctx } = chart;
 
   if (!regions) return;
 
@@ -58,8 +58,57 @@ export function countEpochsInRegion(chart, points, countOnlyVisible) {
 
   return {
     count: count,
-    percentage: count !== 0 ? (count / total * 100).toFixed(1) : 0
+    percentage: calculatePercentageValue(chart, total, count)
   };
+}
+
+/**
+ * Calculate percentage value.
+ *
+ * @param chart - Chart.js instance
+ * @param total - total of points
+ * @param count - number of points in the region
+ * @return {string} the percentage value as string
+ */
+export function calculatePercentageValue(chart, total, count) {
+  const options = chart.options.plugins.stanfordDiagram && chart.options.plugins.stanfordDiagram.percentage ? chart.options.plugins.stanfordDiagram.percentage : {};
+
+  const decimalPlaces = isNaN(+options.decimalPlaces) ? 1 : options.decimalPlaces;
+
+  if (count === 0) {
+    return (0).toFixed(decimalPlaces);
+  }
+
+  const percentage = count / total * 100;
+
+  let roundingMethod;
+
+  switch (options.roundingMethod) {
+  case 'ceil':
+    roundingMethod = Math.ceil;
+    break;
+  case 'floor':
+    roundingMethod = Math.floor;
+    break;
+  case 'round':
+  default:
+    roundingMethod = Math.round;
+    break;
+  }
+
+  return round(roundingMethod, percentage, decimalPlaces).toFixed(decimalPlaces);
+}
+
+/**
+ * Round
+ * @param method
+ * @param value
+ * @param precision
+ * @return {number}
+ */
+function round(method, value, precision) {
+  var multiplier = Math.pow(10, precision || 0);
+  return method(value * multiplier) / multiplier;
 }
 
 /**
@@ -71,11 +120,11 @@ export function countEpochsInRegion(chart, points, countOnlyVisible) {
  * @param countOnlyVisible
  */
 function drawRegionText(chart, text, points, countOnlyVisible) {
-  const {ctx} = chart;
+  const { ctx } = chart;
   const axisX = chart.scales['x-axis-1'];
   const axisY = chart.scales['y-axis-1'];
 
-  const {count, percentage} = countEpochsInRegion(chart, points, countOnlyVisible);
+  const { count, percentage } = countEpochsInRegion(chart, points, countOnlyVisible);
 
   // Get text
   const content = text.format ? text.format(count, percentage) : `${count} (${percentage})`;
@@ -190,7 +239,7 @@ export function pointInPolygon(chart, point, polygon, countOnlyVisible) {
   let xj;
   let intersect;
   let inside = false;
-  const {x, y} = point;
+  const { x, y } = point;
 
   for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
     if (countOnlyVisible) {
@@ -238,7 +287,7 @@ export function pointInPolygon(chart, point, polygon, countOnlyVisible) {
  * @param maxEpochs
  */
 function drawColorScale(chart, maxEpochs) {
-  const {ctx} = chart;
+  const { ctx } = chart;
 
   const barWidth = 25;
   const barHeight = 5;
@@ -381,7 +430,7 @@ function drawLegendLabel(chart, ctx, startPointLeft, startValue, endValue) {
  * @param fillColor
  * @param strokeColor
  */
-CanvasRenderingContext2D.prototype.polygon = function (pointsArray, fillColor, strokeColor) {
+CanvasRenderingContext2D.prototype.polygon = function(pointsArray, fillColor, strokeColor) {
   if (pointsArray.length <= 0) return;
 
   this.save();
@@ -414,7 +463,7 @@ CanvasRenderingContext2D.prototype.polygon = function (pointsArray, fillColor, s
  * Stanford Diagram -- chart type
  */
 Chart.controllers.stanford = Chart.controllers.line.extend({
-  update: function () {
+  update: function() {
     // "Responsive" point radius
     this.chart.options.elements.point.radius = Math.max(Math.round(this.chart.height / 200), 1);
 
@@ -463,7 +512,7 @@ Chart.defaults._set('stanford', {
     enabled: false,
     custom: customTooltipStyle,
     callbacks: {
-      title: function (item) {
+      title: function(item) {
         return [
           {
             label: this._chart.scales['x-axis-1'].options.scaleLabel.labelString,
@@ -474,7 +523,7 @@ Chart.defaults._set('stanford', {
           }
         ];
       },
-      label: function (item, data) {
+      label: function(item, data) {
         return {
           label: this._chart.options.plugins.stanfordDiagram.epochsLabel || 'Epochs',
           value: data.datasets[0].data[item.index].epochs
@@ -490,7 +539,7 @@ Chart.defaults._set('stanford', {
 export const stanfordDiagramPlugin = {
   beforeInit(c) {
     const ns = c.stanfordDiagramPlugin = {
-      options: getStanfordConfig(c.options.plugins),
+      options: getStanfordConfig(c.options.plugins)
     };
 
     if (!ns.options.maxEpochs) {
