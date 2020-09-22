@@ -94,6 +94,20 @@ stanfordDiagram: {
 }
 ```
 
+### Percentage configuration (in regions)
+```js
+stanfordDiagram: {
+  percentage: {
+    decimalPlaces: 1, // The number of decimal places to show. Default: 1
+    roundingMethod: 'round' // The rounding method to use. Default: 'round'
+  }
+}
+```
+
+Available rounding methods:
+ - ```round``` (Similar behaviour to: [Math.round](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/round))
+ - ```ceil``` (Similar behaviour to: [Math.ceil](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/ceil))
+ - ```floor``` (Similar behaviour to: [Math.floor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/floor))
 ## Example
 
 ```js
@@ -136,6 +150,10 @@ new Chart(ctx, {
         legendLabel: 'Number of samples (epochs) per point', // Change the color scale label text
         maxEpochs: 10000, // Change the max value on the scale
         countOnlyVisible: true,
+        percentage: {
+          decimalPlaces: 1,
+          roundingMethod: 'round'
+        },
         regions: [
           {
             points: [ // Add points counter-clockwise

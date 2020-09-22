@@ -1,4 +1,4 @@
-import {countEpochsInRegion, pointInPolygon} from '../src/stanford.js';
+import { calculatePercentageValue, countEpochsInRegion, pointInPolygon } from '../src/stanford.js';
 
 describe('pointInPolygon', () => {
   const chart = {
@@ -93,7 +93,7 @@ describe('countEpochsInRegion', () => {
 
     const result = countEpochsInRegion(chart, region);
 
-    expect(result.percentage).toBe(0);
+    expect(Number(result.percentage)).toBe(0);
     expect(result.count).toBe(0);
   });
 
@@ -109,5 +109,79 @@ describe('countEpochsInRegion', () => {
 
     expect(Number(result.percentage)).toBe(100);
     expect(result.count).toBe(95);
+  });
+});
+
+describe('calculatePercentageValue', () => {
+  it('should return 0 when the count value is 0', () => {
+    const chart = {
+      options: {
+        plugins: {
+          stanfordDiagram: {}
+        }
+      }
+    };
+
+    expect(calculatePercentageValue(chart, 100, 0)).toBe('0.0');
+  });
+
+  it('should round to 1 decimal case by default', () => {
+    const chart = {
+      options: {
+        plugins: {
+          stanfordDiagram: {}
+        }
+      }
+    };
+
+    expect(calculatePercentageValue(chart, 10000, 25)).toBe('0.3'); // 0.025 rounded to 0.3
+  });
+
+  it('should round to 2 decimal cases', () => {
+    const chart = {
+      options: {
+        plugins: {
+          stanfordDiagram: {
+            percentage: {
+              decimalPlaces: 2
+            }
+          }
+        }
+      }
+    };
+
+    expect(calculatePercentageValue(chart, 100000, 2)).toBe('0.00'); // 0.002 rounded to 0.00
+  });
+
+  it('should round to 2 decimal cases', () => {
+    const chart = {
+      options: {
+        plugins: {
+          stanfordDiagram: {
+            percentage: {
+              roundingMethod: 'ceil'
+            }
+          }
+        }
+      }
+    };
+
+    expect(calculatePercentageValue(chart, 100000, 2)).toBe('0.1'); // 0.002 ceil to 0.1
+  });
+
+  it('should round to 2 decimal cases', () => {
+    const chart = {
+      options: {
+        plugins: {
+          stanfordDiagram: {
+            percentage: {
+              roundingMethod: 'floor'
+            }
+          }
+        }
+      }
+    };
+
+    expect(calculatePercentageValue(chart, 100000, 2)).toBe('0.0'); // 0.002 ceil to 0.1
   });
 });
