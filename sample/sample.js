@@ -48,10 +48,7 @@ new Chart(ctx, {
         legendLabel: 'Number of samples (epochs) per point',
         maxEpochs: 10000,
         countOnlyVisible: false,
-        percentage: {
-          decimalPlaces: 1,
-          roundingMethod: 'round'
-        },
+        percentage: new Intl.NumberFormat('en-US', {style: 'percent', minimumFractionDigits: 0, maximumFractionDigits: 5}),
         regions: [
           {
             points: [ // add points counter-clockwise
@@ -65,7 +62,7 @@ new Chart(ctx, {
               y: 35,
               color: 'black',
               format: function (value, percentage) {
-                return `Normal Operations:\n${value} (${percentage}%)`;
+                return `Normal Operations:\n${value} (${percentage})`;
               }
             }
           }, {
@@ -81,7 +78,7 @@ new Chart(ctx, {
               y: 15,
               color: 'black',
               format: function (value, percentage) {
-                return `MI:\n${value} (${percentage}%)`;
+                return `MI:\n${value} (${percentage})`;
               }
             }
           }, {
@@ -98,7 +95,7 @@ new Chart(ctx, {
               y: 32,
               color: 'black',
               format: function (value, percentage) {
-                return `HMI:\n${value} (${percentage}%)`;
+                return `HMI:\n${value} (${percentage})`;
               }
             }
           },
@@ -117,7 +114,7 @@ new Chart(ctx, {
               y: 52,
               color: 'black',
               format: function (value, percentage) {
-                return `Unavailable Epochs:\n${value} (${percentage}%)`;
+                return `Unavailable Epochs:\n${value} (${percentage})`;
               }
             }
           },
@@ -135,7 +132,7 @@ new Chart(ctx, {
               y: 45,
               color: 'black',
               format: function (value, percentage) {
-                return `MI:\n${value} (${percentage}%)`;
+                return `MI:\n${value} (${percentage})`;
               }
             }
           },

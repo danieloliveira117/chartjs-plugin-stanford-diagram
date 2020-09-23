@@ -73,13 +73,16 @@ export function countEpochsInRegion(chart, points, countOnlyVisible) {
 export function calculatePercentageValue(chart, total, count) {
   const options = chart.options.plugins.stanfordDiagram && chart.options.plugins.stanfordDiagram.percentage ? chart.options.plugins.stanfordDiagram.percentage : {};
 
-  const decimalPlaces = isNaN(+options.decimalPlaces) ? 1 : options.decimalPlaces;
-
-  if (count === 0) {
-    return (0).toFixed(decimalPlaces);
+  if (options instanceof Intl.NumberFormat) {
+    return options.format(count === 0 ? 0 : count / total);
   }
 
-  const percentage = count / total * 100;
+  const decimalPlaces = isNaN(+options.decimalPlaces) ? 1 : options.decimalPlaces;
+  const percentage = count === 0 ? 0 : count / total * 100;
+
+  if (percentage === 0) {
+    return percentage.toFixed(decimalPlaces);
+  }
 
   let roundingMethod;
 
