@@ -1,0 +1,10 @@
+[
+  {
+    "path": "dist/chartjs-plugin-stanford-diagram.cjs.production.min.js",
+    "limit": "10 KB"
+  },
+  {
+    "path": "dist/chartjs-plugin-stanford-diagram.esm.js",
+    "limit": "10 KB"
+  }
+]

@@ -1,12 +1,12 @@
 {
   "name": "chartjs-plugin-stanford-diagram",
-  "author": "Daniel Oliveira <daniel.oliveira@present-technologies.com>",
-  "version": "1.7.0",
   "description": "Stanford Diagram plugin for Chart.js",
-  "main": "dist/chartjs-plugin-stanford-diagram.js",
-  "module": "dist/chartjs-plugin-stanford-diagram.js",
-  "es2015": "src/stanford.js",
+  "author": "Daniel Oliveira <daniel.oliveira@present-technologies.com>",
+  "version": "2.0.0-beta",
   "license": "MIT",
+  "main": "dist/index.js",
+  "module": "dist/chartjs-plugin-stanford-diagram.esm.js",
+  "typings": "dist/index.d.ts",
   "keywords": [
     "chart",
     "chartjs",
@@ -17,34 +17,47 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/FreezinG117/chartjs-plugin-stanford-diagram.git"
+    "url": "https://github.com/danieloliveira117/chartjs-plugin-stanford-diagram.git"
   },
   "bugs": {
-    "url": "https://github.com/FreezinG117/chartjs-plugin-stanford-diagram/issues"
+    "url": "https://github.com/danieloliveira117/chartjs-plugin-stanford-diagram/issues"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "engines": {
+    "node": ">=10"
   },
   "scripts": {
-    "start": "npm run watch",
-    "build": "rollup -c",
-    "watch": "rollup -c -w",
-    "test": "karma start"
+    "start": "run-s build demo",
+    "watch": "tsdx watch --no-clean",
+    "demo": "cd demo && npm start",
+    "build": "tsdx build",
+    "test": "tsdx test",
+    "test:watch": "tsdx test --watch",
+    "test:coverage": "tsdx test --coverage",
+    "lint": "tsdx lint src test",
+    "prepare": "tsdx build",
+    "size": "size-limit",
+    "analyze": "size-limit --why"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "tsdx lint"
+    }
   },
   "dependencies": {
-    "chart.js": "^2.9.3"
+    "chart.js": "^3.0.0-beta.8"
   },
   "devDependencies": {
-    "@babel/core": "^7.11.6",
-    "@babel/preset-env": "^7.11.5",
-    "@rollup/plugin-babel": "^5.2.1",
-    "eslint": "^7.9.0",
-    "jasmine-core": "^3.6.0",
-    "karma": "^5.2.2",
-    "karma-chrome-launcher": "^3.1.0",
-    "karma-jasmine": "^4.0.1",
-    "karma-mocha-reporter": "^2.2.5",
-    "rollup": "^2.28.1",
-    "rollup-plugin-eslint": "^7.0.0",
-    "rollup-plugin-livereload": "^2.0.0",
-    "rollup-plugin-serve": "^1.0.4",
-    "rollup-plugin-terser": "^7.0.2"
+    "@size-limit/preset-small-lib": "^4.9.1",
+    "husky": "^4.3.7",
+    "jest-canvas-mock": "^2.3.0",
+    "npm-run-all": "^4.1.5",
+    "size-limit": "^4.9.1",
+    "tsdx": "^0.14.1",
+    "tslib": "^2.1.0",
+    "typescript": "^4.1.3"
   }
 }

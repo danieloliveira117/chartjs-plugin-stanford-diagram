@@ -1,26 +1,23 @@
+// @ts-nocheck
 /* eslint-disable */
+
 /**
  * Assumes h, s, and l are contained in the set [0, 1]
  * thanks to https://codepen.io/anon/pen/ZPqQdM
- *
- * @param a
- * @param b
- * @param o
- * @returns {String}
  */
-export function interpolateHSL(a, b, o) {
+export function interpolateHSL(a: [number, number, number], b: [number, number, number], value: number): string {
   const len = a.length;
   const hsl = Array(len);
 
-  if (o > 1) {
-    o = 1;
-  } else if (o < 0) {
-    o = 0;
+  if (value > 1) {
+    value = 1;
+  } else if (value < 0) {
+    value = 0;
   }
 
   for (let i = 0; i < len; i++) {
     const a1 = a[i];
-    hsl[i] = a1 + (b[i] - a1) * o;
+    hsl[i] = a1 + (b[i] - a1) * value;
   }
 
   return hslToRgb(hsl[0], hsl[1], hsl[2]);
@@ -40,10 +37,10 @@ export function interpolateHSL(a, b, o) {
 function hslToRgb(h, s, l) {
   let r;
   let g;
-  let
-    b;
+  let b;
 
-  if (s === 0) { // achromatic
+  if (s === 0) {
+    // achromatic
     r = l;
     g = l;
     b = l;
@@ -70,7 +67,9 @@ function hslToRgb(h, s, l) {
 
 // sequence
 export function range(start, stop, step) {
-  start = +start, stop = +stop, step = (n = arguments.length) < 2 ? (stop = start, start = 0, 1) : n < 3 ? 1 : +step;
+  (start = +start),
+    (stop = +stop),
+    (step = (n = arguments.length) < 2 ? ((stop = start), (start = 0), 1) : n < 3 ? 1 : +step);
 
   var i = -1,
     n = Math.max(0, Math.ceil((stop - start) / step)) | 0,
@@ -89,7 +88,6 @@ export function scaleSequential() {
 
   return initInterpolator.apply(scale, arguments);
 }
-
 
 export function sequentialLog() {
   var scale = loggish(transformerLog()).domain([1, 10]);
@@ -132,20 +130,24 @@ function pow10(x) {
 }
 
 function powp(base) {
-  return base === 10 ? pow10 :
-    base === Math.E ? Math.exp :
-      function(x) {
+  return base === 10
+    ? pow10
+    : base === Math.E
+    ? Math.exp
+    : function(x) {
         return Math.pow(base, x);
       };
 }
 
 function logp(base) {
-  return base === Math.E ? Math.log :
-    base === 10 && Math.log10 ||
-    base === 2 && Math.log2 ||
-    (base = Math.log(base), function(x) {
-      return Math.log(x) / base;
-    });
+  return base === Math.E
+    ? Math.log
+    : (base === 10 && Math.log10) ||
+        (base === 2 && Math.log2) ||
+        ((base = Math.log(base)),
+        function(x) {
+          return Math.log(x) / base;
+        });
 }
 
 function object(a, b) {
@@ -171,9 +173,13 @@ function object(a, b) {
 }
 
 function interpolateNumber(a, b) {
-  return a = +a, b -= a, function(t) {
-    return a + b * t;
-  };
+  return (
+    (a = +a),
+    (b -= a),
+    function(t) {
+      return a + b * t;
+    }
+  );
 }
 
 function initInterpolator(domain, interpolator) {
@@ -192,11 +198,15 @@ function initInterpolator(domain, interpolator) {
 }
 
 function interpolateValue(a, b) {
-  var t = typeof b, c;
-  return b == null || t === 'boolean' ? defaultFunction(b) :
-    (t === 'number' ? interpolateNumber :
-      typeof b.valueOf !== 'function' && typeof b.toString !== 'function' || isNaN(b) ? object :
-        interpolateNumber)(a, b);
+  var t = typeof b,
+    c;
+  return b == null || t === 'boolean'
+    ? defaultFunction(b)
+    : (t === 'number'
+        ? interpolateNumber
+        : (typeof b.valueOf !== 'function' && typeof b.toString !== 'function') || isNaN(b)
+        ? object
+        : interpolateNumber)(a, b);
 }
 
 function transformerLinear() {
@@ -211,19 +221,23 @@ function transformerLinear() {
     unknown;
 
   function scale(x) {
-    return isNaN(x = +x) ? unknown : interpolator(k10 === 0 ? 0.5 : (x = (transform(x) - t0) * k10, clamp ? Math.max(0, Math.min(1, x)) : x));
+    return isNaN((x = +x))
+      ? unknown
+      : interpolator(k10 === 0 ? 0.5 : ((x = (transform(x) - t0) * k10), clamp ? Math.max(0, Math.min(1, x)) : x));
   }
 
   scale.domain = function(_) {
-    return arguments.length ? (t0 = transform(x0 = +_[0]), t1 = transform(x1 = +_[1]), k10 = t0 === t1 ? 0 : 1 / (t1 - t0), scale) : [x0, x1];
+    return arguments.length
+      ? ((t0 = transform((x0 = +_[0]))), (t1 = transform((x1 = +_[1]))), (k10 = t0 === t1 ? 0 : 1 / (t1 - t0)), scale)
+      : [x0, x1];
   };
 
   scale.interpolator = function(_) {
-    return arguments.length ? (interpolator = _, scale) : interpolator;
+    return arguments.length ? ((interpolator = _), scale) : interpolator;
   };
 
   return function(t) {
-    transform = t, t0 = t(x0), t1 = t(x1), k10 = t0 === t1 ? 0 : 1 / (t1 - t0);
+    (transform = t), (t0 = t(x0)), (t1 = t(x1)), (k10 = t0 === t1 ? 0 : 1 / (t1 - t0));
     return scale;
   };
 }
@@ -244,27 +258,35 @@ function transformerLog() {
     unknown;
 
   function scale(x) {
-    return isNaN(x = +x) ? unknown : interpolator(k10 === 0 ? 0.5 : (x = (transform(x) - t0) * k10, clamp ? Math.max(0, Math.min(1, x)) : x));
+    return isNaN((x = +x))
+      ? unknown
+      : interpolator(k10 === 0 ? 0.5 : ((x = (transform(x) - t0) * k10), clamp ? Math.max(0, Math.min(1, x)) : x));
   }
 
   scale.domain = function(_) {
-    return arguments.length ? ([x0, x1] = _, t0 = transform(x0 = +x0), t1 = transform(x1 = +x1), k10 = t0 === t1 ? 0 : 1 / (t1 - t0), scale) : [x0, x1];
+    return arguments.length
+      ? (([x0, x1] = _),
+        (t0 = transform((x0 = +x0))),
+        (t1 = transform((x1 = +x1))),
+        (k10 = t0 === t1 ? 0 : 1 / (t1 - t0)),
+        scale)
+      : [x0, x1];
   };
 
   scale.clamp = function(_) {
-    return arguments.length ? (clamp = !!_, scale) : clamp;
+    return arguments.length ? ((clamp = !!_), scale) : clamp;
   };
 
   scale.interpolator = function(_) {
-    return arguments.length ? (interpolator = _, scale) : interpolator;
+    return arguments.length ? ((interpolator = _), scale) : interpolator;
   };
 
   scale.unknown = function(_) {
-    return arguments.length ? (unknown = _, scale) : unknown;
+    return arguments.length ? ((unknown = _), scale) : unknown;
   };
 
   return function(t) {
-    transform = t, t0 = t(x0), t1 = t(x1), k10 = t0 === t1 ? 0 : 1 / (t1 - t0);
+    (transform = t), (t0 = t(x0)), (t1 = t(x1)), (k10 = t0 === t1 ? 0 : 1 / (t1 - t0));
     return scale;
   };
 }
@@ -276,20 +298,20 @@ function ticks(start, stop, count) {
     ticks,
     step;
 
-  stop = +stop, start = +start, count = +count;
+  (stop = +stop), (start = +start), (count = +count);
   if (start === stop && count > 0) return [start];
-  if (reverse = stop < start) n = start, start = stop, stop = n;
+  if ((reverse = stop < start)) (n = start), (start = stop), (stop = n);
   if ((step = tickIncrement(start, stop, count)) === 0 || !isFinite(step)) return [];
 
   if (step > 0) {
     start = Math.ceil(start / step);
     stop = Math.floor(stop / step);
-    ticks = new Array(n = Math.ceil(stop - start + 1));
+    ticks = new Array((n = Math.ceil(stop - start + 1)));
     while (++i < n) ticks[i] = (start + i) * step;
   } else {
     start = Math.floor(start * step);
     stop = Math.ceil(stop * step);
-    ticks = new Array(n = Math.ceil(start - stop + 1));
+    ticks = new Array((n = Math.ceil(start - stop + 1)));
     while (++i < n) ticks[i] = (start - i) / step;
   }
 
@@ -302,9 +324,9 @@ function tickIncrement(start, stop, count) {
   var step = (stop - start) / Math.max(0, count),
     power = Math.floor(Math.log(step) / Math.LN10),
     error = step / Math.pow(10, power);
-  return power >= 0 ?
-    (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1) * Math.pow(10, power) :
-    -Math.pow(10, -power) / (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1);
+  return power >= 0
+    ? (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1) * Math.pow(10, power)
+    : -Math.pow(10, -power) / (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1);
 }
 
 function loggish(transform) {
@@ -315,9 +337,9 @@ function loggish(transform) {
     pows;
 
   function rescale() {
-    logs = logp(base), pows = powp(base);
+    (logs = logp(base)), (pows = powp(base));
     if (domain()[0] < 0) {
-      logs = reflect(logs), pows = reflect(pows);
+      (logs = reflect(logs)), (pows = reflect(pows));
       transform(transformLogn, transformExpn);
     } else {
       transform(transformLog, transformExp);
@@ -326,7 +348,7 @@ function loggish(transform) {
   }
 
   scale.base = function(_) {
-    return arguments.length ? (base = +_, rescale()) : base;
+    return arguments.length ? ((base = +_), rescale()) : base;
   };
 
   scale.domain = function(_) {
@@ -339,7 +361,7 @@ function loggish(transform) {
       v = d[d.length - 1],
       r;
 
-    if (r = v < u) i = u, u = v, v = i;
+    if ((r = v < u)) (i = u), (u = v), (v = i);
 
     var i = logs(u),
       j = logs(v),
@@ -350,22 +372,25 @@ function loggish(transform) {
       z = [];
 
     if (!(base % 1) && j - i < n) {
-      i = Math.round(i) - 1, j = Math.round(j) + 1;
-      if (u > 0) for (; i < j; ++i) {
-        for (k = 1, p = pows(i); k < base; ++k) {
-          t = p * k;
-          if (t < u) continue;
-          if (t > v) break;
-          z.push(t);
+      (i = Math.round(i) - 1), (j = Math.round(j) + 1);
+      if (u > 0)
+        for (; i < j; ++i) {
+          for (k = 1, p = pows(i); k < base; ++k) {
+            t = p * k;
+            if (t < u) continue;
+            if (t > v) break;
+            z.push(t);
+          }
         }
-      } else for (; i < j; ++i) {
-        for (k = base - 1, p = pows(i); k >= 1; --k) {
-          t = p * k;
-          if (t < u) continue;
-          if (t > v) break;
-          z.push(t);
+      else
+        for (; i < j; ++i) {
+          for (k = base - 1, p = pows(i); k >= 1; --k) {
+            t = p * k;
+            if (t < u) continue;
+            if (t > v) break;
+            z.push(t);
+          }
         }
-      }
     } else {
       z = ticks(i, j, Math.min(j - i, n)).map(pows);
     }
@@ -378,7 +403,7 @@ function loggish(transform) {
     if (typeof specifier !== 'function') specifier = exports.format(specifier);
     if (count === Infinity) return specifier;
     if (count == null) count = 10;
-    var k = Math.max(1, base * count / scale.ticks().length); // TODO fast estimate?
+    var k = Math.max(1, (base * count) / scale.ticks().length); // TODO fast estimate?
     return function(d) {
       var i = d / pows(Math.round(logs(d)));
       if (i * base < base - 0.5) i *= base;
@@ -387,14 +412,16 @@ function loggish(transform) {
   };
 
   scale.nice = function() {
-    return domain(nice(domain(), {
-      floor: function(x) {
-        return pows(Math.floor(logs(x)));
-      },
-      ceil: function(x) {
-        return pows(Math.ceil(logs(x)));
-      }
-    }));
+    return domain(
+      nice(domain(), {
+        floor: function(x) {
+          return pows(Math.floor(logs(x)));
+        },
+        ceil: function(x) {
+          return pows(Math.ceil(logs(x)));
+        }
+      })
+    );
   };
 
   return scale;
@@ -410,8 +437,8 @@ function nice(domain, interval) {
     t;
 
   if (x1 < x0) {
-    t = i0, i0 = i1, i1 = t;
-    t = x0, x0 = x1, x1 = t;
+    (t = i0), (i0 = i1), (i1 = t);
+    (t = x0), (x0 = x1), (x1 = t);
   }
 
   domain[i0] = interval.floor(x0);

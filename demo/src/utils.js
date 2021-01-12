@@ -1,7 +1,7 @@
 export function logDataValues(data) {
-  const maxEpochs = Math.max(...data.map(o => o.epochs), 0);
-  const maxXPE = Math.max(...data.map(o => o.HPE), 0);
-  const maxYPL = Math.max(...data.map(o => o.HPL), 0);
+  const maxEpochs = Math.max(...data.map((o) => o.epochs), 0);
+  const maxXPE = Math.max(...data.map((o) => o.HPE), 0);
+  const maxYPL = Math.max(...data.map((o) => o.HPL), 0);
   const totalEpochs = data.reduce((a, b) => {
     return a + b.epochs;
   }, 0);

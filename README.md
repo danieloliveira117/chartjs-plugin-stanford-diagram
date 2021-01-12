@@ -94,7 +94,7 @@ stanfordDiagram: {
 }
 ```
 
-## Percentage configuration (in regions)
+#### Percentage configuration (in regions)
 There are two options to configure the percentage for the region text.
 1. Object with `decimalPlaces` and `roundingMethod`:
     ```js

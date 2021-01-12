@@ -1,0 +1,25 @@
+{
+  "name": "stanford-demo-project",
+  "description": "Chart.js Stanford Diagram example project",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/danieloliveira117/chartjs-plugin-stanford-diagram.git"
+  },
+  "bugs": {
+    "url": "https://github.com/danieloliveira117/chartjs-plugin-stanford-diagram/issues"
+  },
+  "scripts": {
+    "start": "npm run watch",
+    "watch": "rollup -c -w"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
+    "@rollup/plugin-babel": "^5.2.2",
+    "@rollup/plugin-node-resolve": "^11.0.1",
+    "rollup": "^2.36.1",
+    "rollup-plugin-livereload": "^2.0.0",
+    "rollup-plugin-serve": "^1.1.0"
+  }
+}
