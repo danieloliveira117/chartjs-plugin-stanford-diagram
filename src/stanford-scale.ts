@@ -1,11 +1,15 @@
 import { Chart } from 'chart.js';
-import { StanfordDiagramDataPoint, StanfordDiagramOptions } from './stanford-diagram.options';
+import { StanfordDiagramDataPoint, StanfordDiagramPluginOptions } from './stanford-diagram.options';
 import { interpolateHSL, range, scaleSequential } from './stanford-utils';
 
 /**
  * Create color scale, if {draw} is true, it draws the scale
  */
-export function drawColorScale(chart: Chart<'stanford'>, pluginOptions: StanfordDiagramOptions, maxEpochs: number) {
+export function drawColorScale(
+  chart: Chart<'stanford'>,
+  pluginOptions: StanfordDiagramPluginOptions,
+  maxEpochs: number
+) {
   const { ctx, options } = chart;
 
   const barWidth = 25;
@@ -123,7 +127,7 @@ function getNumberOfTicks(maxEpochs: number): number {
  */
 function drawLegendLabel(
   { ctx, options }: Chart<'stanford', StanfordDiagramDataPoint[], unknown>,
-  pluginOptions: StanfordDiagramOptions,
+  pluginOptions: StanfordDiagramPluginOptions,
   startPointLeft: any,
   startValue: number,
   endValue: number

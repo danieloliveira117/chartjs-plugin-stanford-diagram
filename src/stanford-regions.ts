@@ -1,7 +1,7 @@
 import { Chart, Color, CoreScaleOptions, Point, Scale } from 'chart.js';
 import {
   StanfordDiagramDataPoint,
-  StanfordDiagramOptions,
+  StanfordDiagramPluginOptions,
   StanfordDiagramRegion,
   StanfordDiagramRegionPoint,
   StanfordDiagramRegionPointGroup,
@@ -11,7 +11,7 @@ import {
 /**
  * Draws the region polygon
  */
-export function drawRegions(chart: Chart<'stanford'>, pluginOptions: StanfordDiagramOptions) {
+export function drawRegions(chart: Chart<'stanford'>, pluginOptions: StanfordDiagramPluginOptions): void {
   const { regions, countOnlyVisible } = pluginOptions;
 
   if (!regions || regions.length === 0) {
@@ -32,7 +32,7 @@ export function drawRegions(chart: Chart<'stanford'>, pluginOptions: StanfordDia
  */
 export function countEpochsInRegion(
   chart: Chart<'stanford', StanfordDiagramDataPoint[], unknown>,
-  pluginOptions: StanfordDiagramOptions,
+  pluginOptions: StanfordDiagramPluginOptions,
   points: StanfordDiagramRegionPointGroup[],
   countOnlyVisible: boolean = false
 ): { count: number; percentage: string } {
@@ -59,7 +59,11 @@ export function countEpochsInRegion(
 /**
  * Calculate percentage value.
  */
-export function calculatePercentageValue(pluginOptions: StanfordDiagramOptions, total: number, count: number) {
+export function calculatePercentageValue(
+  pluginOptions: StanfordDiagramPluginOptions,
+  total: number,
+  count: number
+): string {
   const options = pluginOptions.percentage ?? {};
 
   if (options instanceof Intl.NumberFormat) {
@@ -104,7 +108,7 @@ function round(method: (x: number) => number, value: number, precision: number):
  */
 function drawRegionText(
   chart: Chart<'stanford'>,
-  pluginOptions: StanfordDiagramOptions,
+  pluginOptions: StanfordDiagramPluginOptions,
   text: StanfordDiagramRegionText,
   points: StanfordDiagramRegionPointGroup[],
   countOnlyVisible: boolean = false

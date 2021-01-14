@@ -1,6 +1,6 @@
-import { Chart } from 'chart.js';
+import { CategoryScale, Chart, LinearScale, LineElement, PointElement } from 'chart.js';
 import { calculatePercentageValue, countEpochsInRegion, pointInPolygon } from '../src/stanford-regions';
-import { StanfordDiagramOptions, StanfordDiagramRegionPointGroup } from '../src/stanford-diagram.options';
+import { StanfordDiagramPluginOptions, StanfordDiagramRegionPointGroup } from '../src/stanford-diagram.options';
 import { StanfordDiagramController, stanfordDiagramPlugin } from '../src';
 
 describe('pointInPolygon', () => {
@@ -35,10 +35,12 @@ describe('countEpochsInRegion', () => {
   let chart: Chart<'stanford'>;
 
   beforeAll(() => {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d')!;
+    Chart.register(CategoryScale, LinearScale, PointElement, LineElement, StanfordDiagramController);
 
-    chart = new Chart(ctx, {
+    const canvas = document.createElement('canvas');
+    canvas.id = 'myChart';
+
+    chart = new Chart(canvas, {
       type: StanfordDiagramController.id,
       data: {
         labels: [],
@@ -88,6 +90,12 @@ describe('countEpochsInRegion', () => {
       },
       plugins: [stanfordDiagramPlugin]
     });
+
+    // FIXME: Find another way to test in canvas in JEST
+    chart.ensureScalesHaveIDs();
+    chart.buildOrUpdateScales();
+    chart.scales.x.max = 60;
+    chart.scales.y.max = 60;
   });
 
   it('should return 0 if the region has no epochs', () => {
@@ -121,19 +129,19 @@ describe('countEpochsInRegion', () => {
 
 describe('calculatePercentageValue', () => {
   it('should return 0 when the count value is 0', () => {
-    const options: StanfordDiagramOptions = {};
+    const options: StanfordDiagramPluginOptions = {};
 
     expect(calculatePercentageValue(options, 100, 0)).toBe('0.0');
   });
 
   it('should round to 1 decimal case by default', () => {
-    const options: StanfordDiagramOptions = {};
+    const options: StanfordDiagramPluginOptions = {};
 
     expect(calculatePercentageValue(options, 10000, 25)).toBe('0.3'); // 0.025 rounded to 0.3
   });
 
   it('should round to 2 decimal cases', () => {
-    const options: StanfordDiagramOptions = {
+    const options: StanfordDiagramPluginOptions = {
       percentage: {
         decimalPlaces: 2
       }
@@ -143,7 +151,7 @@ describe('calculatePercentageValue', () => {
   });
 
   it('should round to 2 decimal cases', () => {
-    const options: StanfordDiagramOptions = {
+    const options: StanfordDiagramPluginOptions = {
       percentage: {
         roundingMethod: 'ceil'
       }
@@ -153,7 +161,7 @@ describe('calculatePercentageValue', () => {
   });
 
   it('should round to 2 decimal cases', () => {
-    const options: StanfordDiagramOptions = {
+    const options: StanfordDiagramPluginOptions = {
       percentage: {
         roundingMethod: 'floor'
       }

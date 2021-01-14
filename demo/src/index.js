@@ -10,8 +10,8 @@ Chart.register(CategoryScale, LinearScale, PointElement, LineElement, StanfordDi
 logDataValues(originalData);
 const chartData = originalData.map((e) => ({ x: e.HPE, y: e.HPL, epochs: e.epochs }));
 
-const ctx = document.getElementById('myChart');
-const myChart = new Chart(ctx, {
+const canvas = document.getElementById('myChart');
+const myChart = new Chart(canvas, {
   type: StanfordDiagramController.id,
   data: {
     labels: [],

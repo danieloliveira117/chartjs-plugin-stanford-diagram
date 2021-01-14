@@ -2,12 +2,12 @@ import { Chart, ChartArea, Plugin, UpdateMode } from 'chart.js';
 import { drawColorScale } from './stanford-scale';
 import { drawRegions } from './stanford-regions';
 import { interpolateHSL, sequentialLog } from './stanford-utils';
-import { StanfordDiagramOptions } from './stanford-diagram.options';
+import { StanfordDiagramPluginOptions } from './stanford-diagram.options';
 
 /**
  * Stanford Diagram Plugin
  */
-export class StanfordDiagramPlugin implements Plugin<StanfordDiagramOptions> {
+export class StanfordDiagramPlugin implements Plugin<StanfordDiagramPluginOptions> {
   /**
    * Plugin id.
    */
@@ -26,7 +26,7 @@ export class StanfordDiagramPlugin implements Plugin<StanfordDiagramOptions> {
   /**
    * Called before initializing `chart`.
    */
-  beforeInit(chart: Chart<'stanford'>, _args: {}, options: StanfordDiagramOptions): void {
+  beforeInit(chart: Chart<'stanford'>, _args: {}, options: StanfordDiagramPluginOptions): void {
     if (options.maxEpochs) {
       this.maxEpochs = options.maxEpochs;
     }
@@ -48,7 +48,7 @@ export class StanfordDiagramPlugin implements Plugin<StanfordDiagramOptions> {
   beforeDatasetsUpdate(
     chart: Chart<'stanford'>,
     args: { mode: UpdateMode },
-    _options: StanfordDiagramOptions
+    _options: StanfordDiagramPluginOptions
   ): boolean | void {
     if (this.colorScale && args.mode !== 'resize') {
       chart.data.datasets[0].pointBackgroundColor = [];
@@ -66,7 +66,7 @@ export class StanfordDiagramPlugin implements Plugin<StanfordDiagramOptions> {
   beforeUpdate(
     chart: Chart<'stanford'>,
     _args: { mode: UpdateMode },
-    _options: StanfordDiagramOptions
+    _options: StanfordDiagramPluginOptions
   ): boolean | void {
     // "Responsive" font-size with a min size of 8px
     chart.options.font!.size = Math.max(Math.round(chart.height / 50), 8);
@@ -76,7 +76,7 @@ export class StanfordDiagramPlugin implements Plugin<StanfordDiagramOptions> {
    * Called after the `chart` has been fully rendered (and animation completed). Note
    * that this hook will not be called if the rendering has been previously cancelled.
    */
-  afterRender(chart: Chart<'stanford'>, _args: {}, options: StanfordDiagramOptions) {
+  afterRender(chart: Chart<'stanford'>, _args: {}, options: StanfordDiagramPluginOptions) {
     drawColorScale(chart, options, this.maxEpochs);
     drawRegions(chart, options);
   }

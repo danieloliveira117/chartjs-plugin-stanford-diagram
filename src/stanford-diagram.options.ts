@@ -60,7 +60,7 @@ export interface StanfordDiagramPercentageConfig {
   roundingMethod?: 'round' | 'ceil' | 'floor';
 }
 
-export interface StanfordDiagramOptions {
+export interface StanfordDiagramPluginOptions {
   /**
    * The epochs tooltip label.
    * @default 'Epochs'
@@ -110,5 +110,9 @@ declare module 'chart.js' {
       defaultDataPoint: StanfordDiagramDataPoint;
       scales: keyof CartesianScaleTypeRegistry;
     };
+  }
+
+  interface PluginOptions {
+    stanford: StanfordDiagramPluginOptions;
   }
 }
