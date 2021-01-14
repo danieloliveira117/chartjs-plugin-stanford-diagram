@@ -1,4 +1,5 @@
 import { ChartOptions, LineController, UpdateMode } from 'chart.js';
+import { stanfordDiagramTooltip } from './stanford-diagram.tooltip';
 
 export class StanfordDiagramController extends LineController {
   static readonly id = 'stanford';
@@ -35,36 +36,8 @@ export class StanfordDiagramController extends LineController {
       legend: {
         display: false
       },
-      tooltip: {
-        // TODO: add tooltips
-        enabled: true
-      }
+      tooltip: stanfordDiagramTooltip
     }
-    // tooltips: {
-    //   // Disable the on-canvas tooltip
-    //   enabled: false,
-    //   custom: customTooltipStyle,
-    //   callbacks: {
-    //     title: function(item) {
-    //       return [
-    //         {
-    //           label: this._chart.scales['x-axis-1'].options.scaleLabel.labelString,
-    //           value: item[0].xLabel
-    //         },
-    //         {
-    //           label: this._chart.scales['y-axis-1'].options.scaleLabel.labelString,
-    //           value: item[0].yLabel
-    //         }
-    //       ];
-    //     },
-    //     label: function(item, data) {
-    //       return {
-    //         label: this._chart.options.plugins.stanfordDiagram.epochsLabel || 'Epochs',
-    //         value: data.datasets[0].data[item.index].epochs
-    //       };
-    //     }
-    //   }
-    // }
   };
 
   update(mode: UpdateMode) {
