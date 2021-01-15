@@ -46,7 +46,6 @@ describe('countEpochsInRegion', () => {
         labels: [],
         datasets: [
           {
-            label: 'Horizontal Data',
             data: [
               {
                 x: 25,

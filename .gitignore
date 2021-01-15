@@ -73,4 +73,4 @@ atlassian-ide-plugin.xml
 # CUSTOM
 ######################
 dist
-demo/bundle.js
+demo/dist

@@ -25,7 +25,7 @@ export default [
         contentBase: ''
       }),
       livereload({
-        watch: ['bundle.js', 'index.html']
+        watch: ['dist/bundle.js', 'index.html']
       })
     ]
   }

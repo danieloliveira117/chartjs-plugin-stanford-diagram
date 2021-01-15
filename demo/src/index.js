@@ -15,7 +15,6 @@ const myChart = new Chart(canvas, {
     labels: [],
     datasets: [
       {
-        label: 'Horizontal Data',
         data: chartData
       }
     ]
