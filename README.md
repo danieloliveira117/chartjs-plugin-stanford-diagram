@@ -14,8 +14,8 @@ Check your chart.js version before installing:
 
 | Chart.js version  | Stanford diagram version |
 | ------------- | ------------- |
-| > 2.X  | 1.X ([see chartjs-v2 branch](https://github.com/danieloliveira117/chartjs-plugin-stanford-diagram/tree/chartjs-v2))  |
-| > 3.X  | 2.X (master branch)  |
+| 2.X  | 1.X ([see chartjs-v2 branch](https://github.com/danieloliveira117/chartjs-plugin-stanford-diagram/tree/chartjs-v2))  |
+| 3.X  | 2.X (master branch)  |
 
 ## Configuration
 
