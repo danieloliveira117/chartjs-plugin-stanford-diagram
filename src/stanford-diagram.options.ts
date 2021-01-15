@@ -1,4 +1,4 @@
-import { CartesianScaleTypeRegistry, Color, CoreChartOptions, LineControllerDatasetOptions, Point } from 'chart.js';
+import { CartesianScaleTypeRegistry, Color, CoreChartOptions, Point, ScatterControllerChartOptions } from 'chart.js';
 
 export type StanfordDiagramRegionPoint = 'MAX_X' | 'MAX_Y' | 'MAX_XY' | number;
 
@@ -106,7 +106,7 @@ declare module 'chart.js' {
   interface ChartTypeRegistry {
     stanford: {
       chartOptions: CoreChartOptions;
-      datasetOptions: LineControllerDatasetOptions & { pointBackgroundColor: string[] };
+      datasetOptions: ScatterControllerChartOptions & { pointBackgroundColor: string[] };
       defaultDataPoint: StanfordDiagramDataPoint;
       scales: keyof CartesianScaleTypeRegistry;
     };

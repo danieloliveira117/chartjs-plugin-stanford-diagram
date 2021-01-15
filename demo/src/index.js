@@ -1,9 +1,9 @@
-import { CategoryScale, Chart, LinearScale, LineElement, PointElement, registry, Tooltip } from 'chart.js';
+import { Chart, LinearScale, LineElement, PointElement, Tooltip } from 'chart.js';
 import { StanfordDiagramController, stanfordDiagramPlugin } from '../../dist/chartjs-plugin-stanford-diagram.esm';
 import originalData from './data.js';
 import { logDataValues } from './utils.js';
 
-Chart.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, StanfordDiagramController);
+Chart.register(LinearScale, LineElement, PointElement, Tooltip, StanfordDiagramController);
 
 logDataValues(originalData);
 const chartData = originalData.map((e) => ({ x: e.HPE, y: e.HPL, epochs: e.epochs }));

@@ -7,8 +7,8 @@ export const stanfordDiagramTooltip: DeepPartial<TooltipOptions> = {
   callbacks: {
     title(tooltipItems: TooltipItem[]): string[] {
       const chart = tooltipItems[0].chart;
-      const xLabel = (chart.scales.x.options as LinearScaleOptions).scaleLabel.labelString;
-      const yLabel = (chart.scales.y.options as LinearScaleOptions).scaleLabel.labelString;
+      const xLabel = (chart.scales.x.options as LinearScaleOptions).scaleLabel.labelString || 'x';
+      const yLabel = (chart.scales.y.options as LinearScaleOptions).scaleLabel.labelString || 'y';
 
       const dataPoint: StanfordDiagramDataPoint = tooltipItems[0].dataPoint;
 
